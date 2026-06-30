@@ -11,9 +11,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import Button from '@/components/ui/Button';
-import Container from '@/components/ui/Container';
-import Section from '@/components/ui/Section';
+import { Button } from '@/components/ui/button';
+import Container from '@/components/layout/Container';
+import PageSection from '@/components/layout/PageSection';
 
 export interface HeroStatistic {
   value: string;
@@ -48,7 +48,7 @@ export default function PageHero({
   statistics = [],
 }: PageHeroProps) {
   return (
-    <Section className="relative overflow-hidden bg-gradient-to-br from-sky-700 via-sky-600 to-cyan-600 text-white">
+    <PageSection className="relative overflow-hidden bg-gradient-to-br from-sky-700 via-sky-600 to-cyan-600 py-20 text-white">
       {/* Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,.18),transparent_40%)]" />
 
@@ -127,6 +127,6 @@ export default function PageHero({
           </div>
         </div>
       </Container>
-    </Section>
+    </PageSection>
   );
 }

@@ -83,6 +83,12 @@ export interface LeadershipSection {
   members: LeadershipMember[];
 }
 
+export interface CTAButton {
+  label: string;
+  href: string;
+  variant: 'primary' | 'secondary';
+}
+
 export interface CTASection {
   title: string;
 

@@ -8,7 +8,7 @@
 
 import { AboutContent } from '@/types/public/about.types';
 
-export const history: AboutContent['history'] = {
+export const history: AboutContent['about'] = {
   title: 'About KELTA',
 
   description:

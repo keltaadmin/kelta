@@ -44,13 +44,25 @@ export const ABOUT_DATA: AboutContent = {
   },
 
   visionMission: {
+    title: 'Vision & Mission',
+
+    subtitle:
+      'Our guiding principles and long-term direction.',
+
     vision:
       'To become the leading professional association that empowers every Technical Assistant in Kerala through knowledge, innovation, transparency and collective leadership.',
 
     mission:
       'To protect member interests, improve professional competency, encourage digital governance, strengthen technical services in Local Self Government Institutions and promote ethical public service.',
   },
-  objectives: [
+
+  objectives: {
+    title: 'Our Objectives',
+
+    subtitle:
+      'The core objectives that guide the activities and growth of KELTA.',
+
+    items: [
     {
       id: 'OBJ-001',
       title: 'Professional Development',
@@ -87,9 +99,17 @@ export const ABOUT_DATA: AboutContent = {
       description:
         'Strengthen unity and cooperation among members across all districts of Kerala.',
     },
-  ],
+    
+   ],
+},
 
-  statistics: [
+  statistics: {
+    title: 'KELTA at a Glance',
+
+    subtitle:
+      'A snapshot of our organisation and its impact.',
+
+    items: [
     {
       id: 'STAT-001',
       label: 'District Units',
@@ -118,9 +138,16 @@ export const ABOUT_DATA: AboutContent = {
       suffix: '+',
       iconKey: 'graduationCap',
     },
-  ],
+    ],
+},
 
-  timeline: [
+  timeline: {
+    title: 'Our Journey',
+
+    subtitle:
+      'Key milestones in the evolution of KELTA.',
+
+    items: [
     {
       year: '2012',
       title: 'Association Founded',
@@ -151,9 +178,16 @@ export const ABOUT_DATA: AboutContent = {
       description:
         'Development of the KELTA Enterprise Platform to provide integrated digital services for members and the association.',
     },
-  ],
+    ],
+},
 
-  leadership: [
+  leadership: {
+    title: 'Leadership',
+
+    subtitle:
+      'Current office bearers of the association.',
+
+    members: [
     {
       id: 'L001',
       name: 'Jibin Jose',
@@ -208,5 +242,26 @@ export const ABOUT_DATA: AboutContent = {
       designation: 'Joint Secretary',
       phone: '7593031957',
     },
-  ],
+    ],
+},
+
+  cta: {
+    title: 'Join KELTA',
+
+    subtitle:
+      'Become part of Kerala’s professional community of Technical Assistants.',
+
+    buttons: [
+      {
+        label: 'Become a Member',
+        href: '/membership',
+        variant: 'primary',
+      },
+      {
+        label: 'Contact Us',
+        href: '/contact',
+        variant: 'secondary',
+      },
+    ],
+  },
 };

@@ -1,0 +1,32 @@
+import PublicLayout from '@/components/layouts/PublicLayout';
+
+import NewsTicker from '@/components/public/home/NewsTicker';
+import HomeHero from '@/components/public/home/HomeHero';
+import AboutPreview from '@/components/public/home/AboutPreview';
+import ObjectivesSection from '@/components/public/home/ObjectivesSection';
+import ServicesSection from '@/components/public/home/ServicesSection';
+import LeadershipSection from '@/components/public/home/LeadershipSection';
+import HomeNews from '@/components/public/home/HomeNews';
+import EventsSection from '@/components/public/home/EventsSection';
+import GallerySection from '@/components/public/home/GallerySection';
+import CtaBannerSection from '@/components/public/home/CtaBannerSection';
+import ContactSection from '@/components/public/home/ContactSection';
+
+export default function HomePage() {
+  return (
+    <PublicLayout>
+      <NewsTicker />
+      <HomeHero />
+      <AboutPreview />
+      <ObjectivesSection />
+      <ServicesSection />
+      <LeadershipSection />
+      <HomeNews />
+      <EventsSection />
+      <GallerySection />
+      <CtaBannerSection />
+      <ContactSection />
+    </PublicLayout>
+
+  );
+}

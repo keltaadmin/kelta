@@ -1,0 +1,41 @@
+[
+  { "code":"MEMBER_VIEW","description":"View Members" },
+  { "code":"MEMBER_CREATE","description":"Create Members" },
+  { "code":"MEMBER_UPDATE","description":"Update Members" },
+  { "code":"MEMBER_DELETE","description":"Delete Members" },
+  { "code":"MEMBER_APPROVE","description":"Approve Members" },
+
+  { "code":"DISTRICT_VIEW","description":"View Districts" },
+  { "code":"DISTRICT_CREATE","description":"Create Districts" },
+  { "code":"DISTRICT_UPDATE","description":"Update Districts" },
+  { "code":"DISTRICT_DELETE","description":"Delete Districts" },
+
+  { "code":"COMMITTEE_VIEW","description":"View Committees" },
+  { "code":"COMMITTEE_CREATE","description":"Create Committees" },
+  { "code":"COMMITTEE_UPDATE","description":"Update Committees" },
+  { "code":"COMMITTEE_DELETE","description":"Delete Committees" },
+
+  { "code":"ROLE_VIEW","description":"View Roles" },
+  { "code":"ROLE_CREATE","description":"Create Roles" },
+  { "code":"ROLE_UPDATE","description":"Update Roles" },
+  { "code":"ROLE_DELETE","description":"Delete Roles" },
+
+  { "code":"PERMISSION_VIEW","description":"View Permissions" },
+  { "code":"PERMISSION_CREATE","description":"Create Permissions" },
+  { "code":"PERMISSION_UPDATE","description":"Update Permissions" },
+  { "code":"PERMISSION_DELETE","description":"Delete Permissions" },
+
+  { "code":"WORKFLOW_VIEW","description":"View Workflow" },
+  { "code":"WORKFLOW_APPROVE","description":"Approve Workflow" },
+  { "code":"WORKFLOW_REJECT","description":"Reject Workflow" },
+
+  { "code":"AUDIT_VIEW","description":"View Audit Logs" },
+
+  { "code":"FILE_UPLOAD","description":"Upload Files" },
+  { "code":"FILE_DELETE","description":"Delete Files" },
+
+  { "code":"NOTIFICATION_SEND","description":"Send Notifications" },
+
+  { "code":"SETTINGS_VIEW","description":"View Settings" },
+  { "code":"SETTINGS_UPDATE","description":"Update Settings" }
+]

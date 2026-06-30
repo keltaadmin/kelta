@@ -1,0 +1,41 @@
+# Node
+node_modules/
+
+# PNPM
+.pnpm-store/
+
+# Build
+.next/
+dist/
+out/
+coverage/
+.turbo/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary
+temp/
+tmp/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# Reports (generated)
+tools/audit/reports/

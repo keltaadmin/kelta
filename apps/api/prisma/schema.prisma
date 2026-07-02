@@ -7,75 +7,428 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum AccountStatus {
-  PENDING_VERIFICATION
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-  LOCKED
-  ARCHIVED
+model District {
+  id                     String                  @id @default(cuid())
+  code                   String                  @unique
+  name                   String                  @unique
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  committees             Committee[]
+  members                Member[]
+  membershipApplications MembershipApplication[]
 }
 
-enum SessionStatus {
-  ACTIVE
-  EXPIRED
-  REVOKED
+model Workflow {
+  id                    String            @id @default(cuid())
+  module                String
+  entityType            String
+  entityId              String
+  status                WorkflowStatus    @default(PENDING)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  currentApproverRoleId String?
+  currentApproverUserId String?
+  dueDate               DateTime?
+  priority              Int               @default(1)
+  completedAt           DateTime?
+  currentStep           Int               @default(1)
+  templateId            String?
+  currentApproverRole   Role?             @relation("WorkflowApproverRole", fields: [currentApproverRoleId], references: [id])
+  currentApproverUser   User?             @relation("WorkflowApproverUser", fields: [currentApproverUserId], references: [id])
+  template              WorkflowTemplate? @relation(fields: [templateId], references: [id])
+  actions               WorkflowAction[]
+
+  @@index([module])
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([currentApproverUserId])
+  @@index([currentApproverRoleId])
+  @@index([currentStep])
 }
 
-enum AuditEventType {
-  LOGIN_SUCCESS
-  LOGIN_FAILED
-  LOGOUT
-  PASSWORD_CHANGED
-  PASSWORD_RESET
-  EMAIL_VERIFIED
-  ACCOUNT_LOCKED
-  ACCOUNT_UNLOCKED
-  SESSION_REVOKED
+model WorkflowTemplate {
+  id        String                 @id @default(cuid())
+  code      String                 @unique
+  name      String
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
+  workflows Workflow[]
+  steps     WorkflowTemplateStep[]
+}
+
+model WorkflowTemplateStep {
+  id         String           @id @default(cuid())
+  templateId String
+  stepOrder  Int
+  roleId     String
+  actionName String
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  role       Role             @relation(fields: [roleId], references: [id])
+  template   WorkflowTemplate @relation(fields: [templateId], references: [id])
+
+  @@unique([templateId, stepOrder])
+  @@index([roleId])
+}
+
+model WorkflowAction {
+  id                     String             @id @default(cuid())
+  workflowId             String
+  userId                 String
+  remarks                String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  actedCommitteeMemberId String?
+  stepOrder              Int
+  action                 WorkflowActionType
+  actedCommitteeMember   CommitteeMember?   @relation("WorkflowActionCommitteeMember", fields: [actedCommitteeMemberId], references: [id])
+  user                   User               @relation(fields: [userId], references: [id])
+  workflow               Workflow           @relation(fields: [workflowId], references: [id])
+
+  @@index([workflowId])
+  @@index([userId])
+  @@index([actedCommitteeMemberId])
+  @@index([action])
+}
+
+model Member {
+  id                      String                 @id @default(cuid())
+  memberNumber            String                 @unique
+  firstName               String
+  lastName                String?
+  email                   String?                @unique
+  mobile                  String?                @unique
+  dateOfBirth             DateTime?
+  gender                  Gender?
+  addressLine1            String?
+  addressLine2            String?
+  city                    String?
+  state                   String?
+  postalCode              String?
+  designation             String?
+  joiningDate             DateTime?
+  photoUrl                String?
+  whatsappNumber          String?
+  isLifeMember            Boolean                @default(false)
+  remarks                 String?
+  districtId              String
+  status                  MemberStatus           @default(PENDING)
+  membershipApprovedAt    DateTime?
+  membershipExpiryDate    DateTime?
+  digitalIdIssuedAt       DateTime?
+  isVerified              Boolean                @default(false)
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  committeeMemberships    CommitteeMember[]
+  digitalIdentity         DigitalIdentity?
+  district                District               @relation(fields: [districtId], references: [id])
+  approvedFromApplication MembershipApplication?
+  user                    User?
+
+  @@index([districtId])
+  @@index([status])
 }
 
 model User {
-  id                  String          @id @default(uuid()) @db.Uuid
-  email               String          @unique
-  mobile              String?         @unique
-  passwordHash        String
-  status              AccountStatus   @default(PENDING_VERIFICATION)
-  emailVerified       Boolean         @default(false)
-
-  failedLoginAttempts Int             @default(0)
-  lockedUntil         DateTime?
-
-  lastLoginAt         DateTime?
-
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  deletedAt           DateTime?
-
-  sessions            Session[]
-  auditLogs           AuditLog[]
+  id                             String                  @id @default(cuid())
+  supabaseAuthId                 String?                 @unique
+  email                          String?                 @unique
+  memberId                       String?                 @unique
+  status                         UserStatus              @default(ACTIVE)
+  createdAt                      DateTime                @default(now())
+  updatedAt                      DateTime                @updatedAt
+  auditLogs                      AuditLog[]
+  uploadedFiles                  FileAttachment[]
+  approvedMembershipApplications MembershipApplication[] @relation("MembershipApplicationApprovedBy")
+  createdMembershipApplications  MembershipApplication[] @relation("MembershipApplicationCreatedBy")
+  notifications                  Notification[]
+  member                         Member?                 @relation(fields: [memberId], references: [id])
+  roles                          UserRole[]
+  workflowAssignments            Workflow[]              @relation("WorkflowApproverUser")
+  workflowActions                WorkflowAction[]
 
   @@index([status])
-  @@index([emailVerified])
 }
 
-model Session {
-  id         String        @id @default(uuid()) @db.Uuid
-  userId     String        @db.Uuid
-  status     SessionStatus @default(ACTIVE)
-  createdAt  DateTime      @default(now())
+model Role {
+  id                    String                 @id @default(cuid())
+  name                  String                 @unique
+  description           String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  permissions           RolePermission[]
+  users                 UserRole[]
+  workflowApprovals     Workflow[]             @relation("WorkflowApproverRole")
+  workflowTemplateSteps WorkflowTemplateStep[]
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Permission {
+  id          String           @id @default(cuid())
+  code        String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  roles       RolePermission[]
+}
 
-  @@index([userId])
+model RolePermission {
+  roleId       String
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  role         Role       @relation(fields: [roleId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId     String
+  roleId     String
+  assignedAt DateTime  @default(now())
+  expiresAt  DateTime?
+  role       Role      @relation(fields: [roleId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model Committee {
+  id         String            @id @default(cuid())
+  name       String
+  code       String            @unique
+  level      CommitteeLevel
+  districtId String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  district   District?         @relation(fields: [districtId], references: [id])
+  members    CommitteeMember[]
+}
+
+model CommitteePosition {
+  id          String            @id @default(cuid())
+  name        String
+  code        String            @unique
+  description String?
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  members     CommitteeMember[]
+}
+
+model CommitteeMember {
+  id              String            @id @default(cuid())
+  committeeId     String
+  memberId        String
+  positionId      String
+  startDate       DateTime?
+  endDate         DateTime?
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  committee       Committee         @relation(fields: [committeeId], references: [id])
+  member          Member            @relation(fields: [memberId], references: [id])
+  position        CommitteePosition @relation(fields: [positionId], references: [id])
+  workflowActions WorkflowAction[]  @relation("WorkflowActionCommitteeMember")
+
+  @@unique([committeeId, memberId])
+  @@index([memberId])
+  @@index([committeeId])
+  @@index([positionId])
 }
 
 model AuditLog {
-  id        String         @id @default(uuid()) @db.Uuid
-  userId    String?        @db.Uuid
-  eventType AuditEventType
-  createdAt DateTime       @default(now())
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User?    @relation(fields: [userId], references: [id])
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([entityType, entityId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  title     String
+  message   String
+  userId    String?
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User?     @relation(fields: [userId], references: [id])
 
   @@index([userId])
+  @@index([isRead])
+}
+
+model FileAttachment {
+  id           String   @id @default(cuid())
+  fileName     String
+  fileUrl      String
+  entityType   String?
+  entityId     String?
+  mimeType     String?
+  uploadedById String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+
+  @@index([entityType, entityId])
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MembershipApplication {
+  id               String            @id @default(cuid())
+  applicationNo    String            @unique
+  firstName        String
+  lastName         String?
+  email            String?
+  mobile           String?
+  dateOfBirth      DateTime?
+  gender           Gender?
+  designation      String?
+  addressLine1     String?
+  addressLine2     String?
+  city             String?
+  state            String?
+  postalCode       String?
+  districtId       String
+  membershipType   MembershipType    @default(REGULAR)
+  source           ApplicationSource @default(WEB)
+  status           ApplicationStatus @default(DRAFT)
+  remarks          String?
+  approvedMemberId String?           @unique
+  createdById      String?
+  approvedById     String?
+  submittedAt      DateTime?
+  approvedAt       DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  approvedBy       User?             @relation("MembershipApplicationApprovedBy", fields: [approvedById], references: [id])
+  approvedMember   Member?           @relation(fields: [approvedMemberId], references: [id])
+  createdBy        User?             @relation("MembershipApplicationCreatedBy", fields: [createdById], references: [id])
+  district         District          @relation(fields: [districtId], references: [id])
+
+  @@index([districtId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model RunningSequence {
+  id        String       @id @default(cuid())
+  scope     String?
+  currentNo Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  type      SequenceType
+
+  @@unique([type, scope])
+}
+
+model DigitalIdentity {
+  id               String    @id @default(cuid())
+  memberId         String    @unique
+  memberNumber     String    @unique
+  publicToken      String    @unique
+  qrToken          String    @unique
+  cardVersion      Int       @default(1)
+  regeneratedCount Int       @default(0)
+  issuedAt         DateTime
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  member           Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberNumber])
+  @@index([publicToken])
+}
+
+enum MemberStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  RETIRED
+}
+
+enum CommitteeLevel {
+  STATE
+  DISTRICT
+}
+
+enum WorkflowStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RETURNED
+  CANCELLED
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+  LOCKED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  DISTRICT_REVIEW
+  DISTRICT_APPROVED
+  STATE_REVIEW
+  APPROVED
+  RETURNED
+  REJECTED
+  CANCELLED
+}
+
+enum MembershipType {
+  REGULAR
+  LIFE
+}
+
+enum ApplicationSource {
+  WEB
+  OFFICE
+  MOBILE
+}
+
+enum WorkflowActionType {
+  SUBMIT
+  APPROVE
+  REJECT
+  RETURN
+  CANCEL
+  COMPLETE
+  AUTO_APPROVE
+  REASSIGN
+  ESCALATE
+}
+
+enum SequenceType {
+  MEMBERSHIP_APPLICATION
+  MEMBER
+  RECEIPT
+  MEETING
+  CIRCULAR
+  CERTIFICATE
+  PAYMENT
 }

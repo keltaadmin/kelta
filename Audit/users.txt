@@ -1,0 +1,280 @@
+==============================================================
+KELTA Enterprise Audit Export
+Module : users
+Generated : 07/02/2026 10:33:58
+==============================================================
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\dto\create-user.dto.ts
+##############################################################
+
+import { IsEmail, IsOptional, IsString } from 'class-validator';
+
+export class CreateUserDto {
+  @IsOptional()
+  @IsString()
+  supabaseAuthId?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  memberId?: string;
+}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\dto\update-user.dto.ts
+##############################################################
+
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateUserDto } from './create-user.dto';
+
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\users.controller.spec.ts
+##############################################################
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersController } from './users.controller';
+
+describe('UsersController', () => {
+  let controller: UsersController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+    }).compile();
+
+    controller = module.get<UsersController>(UsersController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\users.controller.ts
+##############################################################
+
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+
+import { UsersService } from './users.service';
+
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    return this.usersService.create(dto);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.usersService.update(id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
+  }
+
+  @Post(':id/roles/:roleId')
+  assignRole(@Param('id') id: string, @Param('roleId') roleId: string) {
+    return this.usersService.assignRole(id, roleId);
+  }
+
+  @Get(':id/roles')
+  getRoles(@Param('id') id: string) {
+    return this.usersService.getRoles(id);
+  }
+
+  @Delete(':id/roles/:roleId')
+  removeRole(@Param('id') id: string, @Param('roleId') roleId: string) {
+    return this.usersService.removeRole(id, roleId);
+  }
+}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\users.module.ts
+##############################################################
+
+import { Module } from '@nestjs/common';
+
+import { PrismaModule } from '../prisma/prisma.module';
+
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+
+@Module({
+  imports: [PrismaModule],
+  controllers: [UsersController],
+  providers: [UsersService],
+})
+export class UsersModule {}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\users.service.spec.ts
+##############################################################
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersService } from './users.service';
+
+describe('UsersService', () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [UsersService],
+    }).compile();
+
+    service = module.get<UsersService>(UsersService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\users\users.service.ts
+##############################################################
+
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+import { PrismaService } from '../prisma/prisma.service';
+
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+
+@Injectable()
+export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() {
+    return this.prisma.user.findMany({
+      include: {
+        member: true,
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findOne(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        member: true,
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
+  async create(data: CreateUserDto) {
+    return this.prisma.user.create({
+      data,
+    });
+  }
+
+  async update(id: string, data: UpdateUserDto) {
+    await this.findOne(id);
+
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async remove(id: string) {
+    await this.findOne(id);
+
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async assignRole(userId: string, roleId: string) {
+    return this.prisma.userRole.create({
+      data: {
+        userId,
+        roleId,
+      },
+    });
+  }
+
+  async removeRole(userId: string, roleId: string) {
+    return this.prisma.userRole.delete({
+      where: {
+        userId_roleId: {
+          userId,
+          roleId,
+        },
+      },
+    });
+  }
+
+  async getRoles(userId: string) {
+    return this.prisma.userRole.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        role: true,
+      },
+    });
+  }
+}
+

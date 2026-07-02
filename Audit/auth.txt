@@ -1,0 +1,129 @@
+==============================================================
+KELTA Enterprise Audit Export
+Module : auth
+Generated : 07/02/2026 10:25:34
+==============================================================
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.constants.ts
+##############################################################
+
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.controller.spec.ts
+##############################################################
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthController } from './auth.controller';
+
+describe('AuthController', () => {
+  let controller: AuthController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+    }).compile();
+
+    controller = module.get<AuthController>(AuthController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.controller.ts
+##############################################################
+
+import { Controller } from '@nestjs/common';
+
+@Controller('auth')
+export class AuthController {}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.interface.ts
+##############################################################
+
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.module.ts
+##############################################################
+
+import { Module } from '@nestjs/common';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+
+@Module({
+  controllers: [AuthController],
+  providers: [AuthService],
+})
+export class AuthModule {}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.service.spec.ts
+##############################################################
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+
+describe('AuthService', () => {
+  let service: AuthService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [AuthService],
+    }).compile();
+
+    service = module.get<AuthService>(AuthService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.service.ts
+##############################################################
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AuthService {}
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\auth.types.ts
+##############################################################
+
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\dto\login.dto.ts
+##############################################################
+
+
+
+##############################################################
+FILE:
+D:\KELTA\apps\api\src\auth\dto\refresh-token.dto.ts
+##############################################################
+
+

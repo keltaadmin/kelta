@@ -42,6 +42,55 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        member: true,
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findBySupabaseId(supabaseAuthId: string) {
+    return this.prisma.user.findUnique({
+      where: { supabaseAuthId },
+      include: {
+        member: true,
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updateLastLogin(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastLoginAt: new Date(),
+      },
+    });
+  }
+
+  async createFromSupabase(data: {
+    supabaseAuthId: string;
+    email: string;
+  }) {
+    return this.prisma.user.create({
+      data: {
+        supabaseAuthId: data.supabaseAuthId,
+        email: data.email,
+      },
+    });
+  }
+
   async create(data: CreateUserDto) {
     return this.prisma.user.create({
       data,
@@ -95,4 +144,5 @@ export class UsersService {
       },
     });
   }
+
 }

@@ -24,6 +24,7 @@ model Workflow {
   entityType            String
   entityId              String
   status                WorkflowStatus    @default(PENDING)
+  lastLoginAt           DateTime?
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
   currentApproverRoleId String?
@@ -130,21 +131,25 @@ model Member {
 }
 
 model User {
-  id                             String                  @id @default(cuid())
-  supabaseAuthId                 String?                 @unique
-  email                          String?                 @unique
-  memberId                       String?                 @unique
-  status                         UserStatus              @default(ACTIVE)
-  createdAt                      DateTime                @default(now())
-  updatedAt                      DateTime                @updatedAt
+  id             String      @id @default(cuid())
+  supabaseAuthId String?     @unique
+  email          String?     @unique
+  memberId       String?     @unique
+  status         UserStatus  @default(ACTIVE)
+
+  lastLoginAt    DateTime?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
   auditLogs                      AuditLog[]
   uploadedFiles                  FileAttachment[]
   approvedMembershipApplications MembershipApplication[] @relation("MembershipApplicationApprovedBy")
   createdMembershipApplications  MembershipApplication[] @relation("MembershipApplicationCreatedBy")
   notifications                  Notification[]
-  member                         Member?                 @relation(fields: [memberId], references: [id])
+  member                         Member? @relation(fields: [memberId], references: [id])
   roles                          UserRole[]
-  workflowAssignments            Workflow[]              @relation("WorkflowApproverUser")
+  workflowAssignments            Workflow[] @relation("WorkflowApproverUser")
   workflowActions                WorkflowAction[]
 
   @@index([status])

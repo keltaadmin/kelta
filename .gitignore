@@ -39,3 +39,10 @@ prisma/dev.db-journal
 
 # Reports (generated)
 tools/audit/reports/
+
+# Archives
+*.zip
+
+*.7z
+
+*.rar

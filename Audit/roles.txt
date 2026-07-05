@@ -50,7 +50,7 @@ import {
   Post,
 } from '@nestjs/common';
 
-import { RolesService } from './roles.service';
+import { RolesService } from './catalog/roles.service';
 
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -116,8 +116,8 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../prisma/prisma.module';
 
-import { RolesController } from './roles.controller';
-import { RolesService } from './roles.service';
+import { RolesController } from './catalog/roles.controller';
+import { RolesService } from './catalog/roles.service';
 
 @Module({
   imports: [PrismaModule],

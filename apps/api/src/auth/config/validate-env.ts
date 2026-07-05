@@ -5,8 +5,7 @@ export function validateEnv(
     'SUPABASE_URL',
     'SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
-    'JWT_ISSUER',
-    'JWT_AUDIENCE',
+
   ];
 
   const missing = required.filter(

@@ -1,7 +1,7 @@
 export const AUTH = {
   LOGIN_PATH: '/login',
 
-  DASHBOARD_PATH: '/dashboard',
+  DASHBOARD_PATH: '/portal/dashboard',
 
   SESSION_COOKIE: 'kelta-session',
 

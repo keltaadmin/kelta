@@ -1,0 +1,30 @@
+/**
+ * Member Domain Events
+ */
+
+export const MEMBER_EVENT = Object.freeze({
+
+  CREATED: 'MEMBER_CREATED',
+
+  UPDATED: 'MEMBER_UPDATED',
+
+  ACTIVATED: 'MEMBER_ACTIVATED',
+
+  DEACTIVATED: 'MEMBER_DEACTIVATED',
+
+  SUSPENDED: 'MEMBER_SUSPENDED',
+
+  RESTORED: 'MEMBER_RESTORED',
+
+  RETIRED: 'MEMBER_RETIRED',
+
+  RENEWED: 'MEMBER_RENEWED',
+
+  TRANSFERRED: 'MEMBER_TRANSFERRED',
+
+  VERIFIED: 'MEMBER_VERIFIED',
+
+} as const);
+
+export type MemberEventType =
+  (typeof MEMBER_EVENT)[keyof typeof MEMBER_EVENT];

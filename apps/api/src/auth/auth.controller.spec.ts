@@ -1,18 +1,37 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
+import {
+  Controller,
+  Get,
+  Headers,
+  UnauthorizedException,
+} from '@nestjs/common';
 
-describe('AuthController', () => {
-  let controller: AuthController;
+import { AuthService } from './services/auth.service';
+import { SupabaseAuthService } from './services/supabase-auth.service';
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-    }).compile();
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly supabaseAuthService: SupabaseAuthService,
+  ) {}
 
-    controller = module.get<AuthController>(AuthController);
-  });
+  @Get('me')
+  async me(
+    @Headers('authorization') authorization?: string,
+  ) {
+    if (!authorization?.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Missing Bearer token');
+    }
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-});
+    const token = authorization.substring(7);
+
+    const supabaseUser =
+      await this.supabaseAuthService.verifyAccessToken(
+        token,
+      );
+
+    return this.authService.authenticateSupabaseUser(
+      supabaseUser,
+    );
+  }
+}

@@ -93,40 +93,65 @@ model WorkflowAction {
 }
 
 model Member {
-  id                      String                 @id @default(cuid())
-  memberNumber            String                 @unique
+  id                      String       @id @default(cuid())
+
+  memberNumber            String       @unique
+
   firstName               String
   lastName                String?
-  email                   String?                @unique
-  mobile                  String?                @unique
+
+  email                   String?      @unique
+  mobile                  String?      @unique
+
   dateOfBirth             DateTime?
   gender                  Gender?
+
   addressLine1            String?
   addressLine2            String?
   city                    String?
   state                   String?
   postalCode              String?
+
   designation             String?
   joiningDate             DateTime?
+
   photoUrl                String?
   whatsappNumber          String?
-  isLifeMember            Boolean                @default(false)
+
+  isLifeMember            Boolean      @default(false)
+
   remarks                 String?
+
   districtId              String
-  status                  MemberStatus           @default(PENDING)
+
+  status                  MemberStatus @default(PENDING)
+
   membershipApprovedAt    DateTime?
+  membershipActivatedAt   DateTime?
   membershipExpiryDate    DateTime?
+
   digitalIdIssuedAt       DateTime?
-  isVerified              Boolean                @default(false)
-  createdAt               DateTime               @default(now())
-  updatedAt               DateTime               @updatedAt
+
+  isVerified              Boolean      @default(false)
+
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+
+  district                District @relation(
+    fields: [districtId],
+    references: [id],
+  )
+
   committeeMemberships    CommitteeMember[]
+
   digitalIdentity         DigitalIdentity?
-  district                District               @relation(fields: [districtId], references: [id])
+
   approvedFromApplication MembershipApplication?
+
   user                    User?
 
   @@index([districtId])
+
   @@index([status])
 }
 

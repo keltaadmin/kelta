@@ -9,7 +9,8 @@ import {
 
 import { AuthContext } from '@/contexts/AuthContext';
 
-import { authService } from '@/lib/auth/auth.service';
+import { authRepository } from '@/lib/auth/auth.repository';
+import { getSupabaseClient } from '@/lib/supabase/client';
 
 import type { User } from '@/types/user';
 
@@ -31,27 +32,58 @@ export default function AuthProvider({
       setLoading(true);
 
       try {
-        await authService.refresh();
+        const authenticated =
+          await authRepository.refreshSession();
+
+        if (!authenticated) {
+          setUser(null);
+          return;
+        }
+
+        const currentUser =
+          await authRepository.currentUser();
+
+        setUser(currentUser);
+      } catch (error) {
+        console.error(
+          'Authentication refresh failed:',
+          error,
+        );
 
         setUser(null);
-
-        /**
-         * Packet C
-         *
-         * Replace this with
-         * Supabase session lookup.
-         */
       } finally {
         setLoading(false);
       }
     }, []);
 
   useEffect(() => {
-    const initialize = async () => {
-      await refresh();
-    };
+    const supabase =
+      getSupabaseClient();
 
-    void initialize();
+    void refresh();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      async (event) => {
+        switch (event) {
+          case 'INITIAL_SESSION':
+          case 'SIGNED_IN':
+          case 'SIGNED_OUT':
+          case 'TOKEN_REFRESHED':
+          case 'USER_UPDATED':
+            await refresh();
+            break;
+
+          default:
+            break;
+        }
+      },
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [refresh]);
 
   return (

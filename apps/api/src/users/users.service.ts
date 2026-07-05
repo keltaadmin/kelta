@@ -5,34 +5,29 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+const userWithRelations = {
+  member: true,
+  roles: {
+    include: {
+      role: true,
+    },
+  },
+} as const;
+
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
     return this.prisma.user.findMany({
-      include: {
-        member: true,
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
+      include: userWithRelations,
     });
   }
 
   async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: {
-        member: true,
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
+      include: userWithRelations,
     });
 
     if (!user) {
@@ -45,37 +40,14 @@ export class UsersService {
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
-      include: {
-        member: true,
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
+      include: userWithRelations,
     });
   }
 
   async findBySupabaseId(supabaseAuthId: string) {
     return this.prisma.user.findUnique({
       where: { supabaseAuthId },
-      include: {
-        member: true,
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-    });
-  }
-
-  async updateLastLogin(userId: string) {
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        lastLoginAt: new Date(),
-      },
+      include: userWithRelations,
     });
   }
 
@@ -88,12 +60,24 @@ export class UsersService {
         supabaseAuthId: data.supabaseAuthId,
         email: data.email,
       },
+      include: userWithRelations,
+    });
+  }
+
+  async updateLastLogin(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastLoginAt: new Date(),
+      },
+      include: userWithRelations,
     });
   }
 
   async create(data: CreateUserDto) {
     return this.prisma.user.create({
       data,
+      include: userWithRelations,
     });
   }
 
@@ -103,6 +87,7 @@ export class UsersService {
     return this.prisma.user.update({
       where: { id },
       data,
+      include: userWithRelations,
     });
   }
 
@@ -144,5 +129,4 @@ export class UsersService {
       },
     });
   }
-
 }

@@ -57,4 +57,16 @@ export class MemberTimelineService {
       await this.record(event);
     }
   }
+
+    async recordLifecycle(
+    event: MemberEvent,
+  ): Promise<void> {
+    await this.record(event);
+  }
+
+  async recordSystem(
+    event: MemberEvent,
+  ): Promise<void> {
+    await this.record(event);
+  }
 }

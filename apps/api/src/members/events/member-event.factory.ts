@@ -38,4 +38,66 @@ export class MemberEventFactory {
       },
     );
   }
+
+  memberSuspended(
+    memberId: string,
+    previousStatus: string,
+    performedBy?: string,
+  ): MemberEvent {
+    return this.create(
+      MEMBER_EVENT.SUSPENDED,
+      memberId,
+      performedBy,
+      {
+        previousStatus,
+      },
+    );
+  }
+
+  memberRestored(
+    memberId: string,
+    previousStatus: string,
+    performedBy?: string,
+  ): MemberEvent {
+    return this.create(
+      MEMBER_EVENT.RESTORED,
+      memberId,
+      performedBy,
+      {
+        previousStatus,
+      },
+    );
+  }
+
+  membershipRenewed(
+    memberId: string,
+    previousExpiry: Date | null,
+    nextExpiry: Date,
+    performedBy?: string,
+  ): MemberEvent {
+    return this.create(
+      MEMBER_EVENT.RENEWED,
+      memberId,
+      performedBy,
+      {
+        previousExpiry,
+        nextExpiry,
+      },
+    );
+  }
+
+  memberRetired(
+    memberId: string,
+    previousStatus: string,
+    performedBy?: string,
+  ): MemberEvent {
+    return this.create(
+      MEMBER_EVENT.RETIRED,
+      memberId,
+      performedBy,
+      {
+        previousStatus,
+      },
+    );
+  }
 }

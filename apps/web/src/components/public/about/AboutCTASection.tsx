@@ -9,7 +9,7 @@
 
 import Link from 'next/link';
 
-import { cta } from '@/data/public/about';
+import { ABOUT_DATA } from '@/data/public/about.data';
 
 import {
   Container,
@@ -19,6 +19,8 @@ import {
 import { Button } from '@/components/ui/button';
 
 export default function AboutCTASection() {
+  const { cta } = ABOUT_DATA;
+
   return (
     <PageSection className="bg-sky-700 text-white">
       <Container>
@@ -47,7 +49,6 @@ export default function AboutCTASection() {
                 </Link>
               </Button>
             ))}
-              
           </div>
         </div>
       </Container>

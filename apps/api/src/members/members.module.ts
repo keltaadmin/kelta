@@ -6,27 +6,35 @@ import { MembersService } from './members.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { NumberingModule } from '../numbering/numbering.module';
 
-import { MemberAuditService } from './audit/member-audit.service';
 import { MemberEventFactory } from './events';
+import { MemberCardModule } from './card';
 
 import {
-  MemberLifecycleService,
-  MemberDirectoryService,
+  MemberAuditService,
   MemberCardService,
+  MemberDirectoryService,
   MemberDocumentService,
+  MemberLifecycleService,
   MemberRenewalService,
   MemberTimelineService,
   MemberTransferService,
 } from './services';
 
+import {
+  DigitalIdentityService,
+  MemberVerificationService,
+} from './services';
+
+import { QRModule } from '../infrastructure/qr';
+
 /**
  * Enterprise Member Module
  *
- * Responsibilities:
+ * Responsibilities
  * - Member CRUD
  * - Member lifecycle
  * - Member directory
- * - Digital identity
+ * - Member digital identity
  * - Member documents
  * - Timeline
  * - Renewals
@@ -36,6 +44,8 @@ import {
   imports: [
     PrismaModule,
     NumberingModule,
+    QRModule,
+    MemberCardModule,
   ],
 
   controllers: [
@@ -55,6 +65,9 @@ import {
 
     MemberAuditService,
     MemberEventFactory,
+
+    DigitalIdentityService,
+    MemberVerificationService,
   ],
 
   exports: [

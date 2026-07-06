@@ -11,13 +11,21 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { NumberingService } from '../numbering/numbering.service';
 
+
 import {
   MemberLifecycleService,
+  MemberTimelineService,
+  MemberAuditService,
 } from './services';
+
+import { MemberEventFactory } from './events';
+
+import type { MemberEvent } from './interfaces';
 
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberQueryDto } from './dto/member-query.dto';
+
 
 /**
  * Enterprise Members Service
@@ -40,35 +48,55 @@ import { MemberQueryDto } from './dto/member-query.dto';
 @Injectable()
 export class MembersService {
   constructor(
-    private readonly prisma: PrismaService,
+      private readonly prisma: PrismaService,
 
-    private readonly numberingService: NumberingService,
+      private readonly numberingService: NumberingService,
 
-    private readonly lifecycle: MemberLifecycleService,
+      private readonly lifecycle: MemberLifecycleService,
+
+      private readonly timeline: MemberTimelineService,
+
+      private readonly audit: MemberAuditService,
+
+      private readonly events: MemberEventFactory,
   ) {}
 
+
   /**
-   * Returns a paginated member directory.
-   */
+ * Returns a paginated member directory.
+ *
+ * Supports:
+ * - Search
+ * - Status filtering
+ * - District filtering
+ * - Gender filtering
+ * - Verification filtering
+ * - Life member filtering
+ * - Joining date range
+ * - Dynamic sorting
+ * - Pagination
+ */
   async findAll(query: MemberQueryDto) {
     const {
       page,
       limit,
-      districtId,
       search,
+      districtId,
       status,
+      gender,
+      isVerified,
+      isLifeMember,
+      joiningFrom,
+      joiningTo,
+      sortBy,
+      sortOrder,
     } = query;
 
     const where: Prisma.MemberWhereInput = {};
 
-    if (districtId) {
-      where.districtId = districtId;
-    }
-
-    if (status) {
-      where.status = status;
-    }
-
+    /**
+     * Search
+     */
     if (search) {
       where.OR = [
         {
@@ -95,8 +123,59 @@ export class MembersService {
             mode: 'insensitive',
           },
         },
+        {
+          email: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
       ];
     }
+
+    /**
+     * Filters
+     */
+    if (districtId) {
+      where.districtId = districtId;
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (gender) {
+      where.gender = gender;
+    }
+
+    if (typeof isVerified === 'boolean') {
+      where.isVerified = isVerified;
+    }
+
+    if (typeof isLifeMember === 'boolean') {
+      where.isLifeMember = isLifeMember;
+    }
+
+    /**
+     * Joining Date Range
+     */
+    if (joiningFrom || joiningTo) {
+      where.joiningDate = {};
+
+      if (joiningFrom) {
+        where.joiningDate.gte = new Date(joiningFrom);
+      }
+
+      if (joiningTo) {
+        where.joiningDate.lte = new Date(joiningTo);
+      }
+    }
+
+    /**
+     * Sorting
+     */
+    const orderBy: Prisma.MemberOrderByWithRelationInput = {
+      [sortBy]: sortOrder,
+    };
 
     const [items, total] =
       await this.prisma.$transaction([
@@ -107,13 +186,11 @@ export class MembersService {
             district: true,
           },
 
+          orderBy,
+
           skip: (page - 1) * limit,
 
           take: limit,
-
-          orderBy: {
-            firstName: 'asc',
-          },
         }),
 
         this.prisma.member.count({
@@ -121,12 +198,24 @@ export class MembersService {
         }),
       ]);
 
+    const totalPages = Math.ceil(total / limit);
+
     return {
       items,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+
+      pagination: {
+        page,
+
+        limit,
+
+        total,
+
+        totalPages,
+
+        hasNext: page < totalPages,
+
+        hasPrevious: page > 1,
+      },
     };
   }
 
@@ -176,53 +265,55 @@ export class MembersService {
   /**
    * Activates a member.
    *
-   * Future integrations:
-   *
-   * • Timeline
-   * • Audit
-   * • Notification
-   * • Digital Identity
-   * • QR Generation
+   * Business Rules
+   * --------------
+   * - Member must exist.
+   * - Transition must be valid.
+   * - Activation timestamp is only set once.
+   * - Publishes timeline and audit events.
    */
   async activateMember(id: string) {
-    return this.prisma.$transaction(
-      async (tx) => {
-        const member =
-          await tx.member.findUnique({
-            where: { id },
-          });
+    return this.prisma.$transaction(async (tx) => {
+      const member = await tx.member.findUnique({
+        where: { id },
+      });
 
-        if (!member) {
-          throw new NotFoundException(
-            `Member '${id}' was not found.`,
-          );
-        }
+      if (!member) {
+        throw new NotFoundException(
+          `Member '${id}' was not found.`,
+        );
+      }
 
-        const status =
-          this.lifecycle.activate(
-            member.status,
-          );
+      const status = this.lifecycle.activate(
+        member.status,
+      );
 
-        return tx.member.update({
-          where: {
-            id,
-          },
+      const activatedAt =
+        member.membershipActivatedAt ?? new Date();
 
-          data: {
-            status,
-          },
-        });
-      },
-    );
+      const updated = await tx.member.update({
+        where: { id },
+
+        data: {
+          status,
+          membershipActivatedAt: activatedAt,
+        },
+      });
+
+      const event =
+        this.events.memberActivated(
+          updated.id,
+          member.status,
+        );
+
+      await this.publishEvent(event);
+
+      return updated;
+    });
   }
 
   /**
    * Suspends a member.
-   *
-   * Future integrations:
-   * • Timeline
-   * • Audit
-   * • Notification
    */
   async suspendMember(id: string) {
     return this.prisma.$transaction(async (tx) => {
@@ -240,18 +331,28 @@ export class MembersService {
         member.status,
       );
 
-      return tx.member.update({
+      const updated = await tx.member.update({
         where: { id },
 
         data: {
           status,
         },
       });
+
+      const event =
+        this.events.memberSuspended(
+          updated.id,
+          member.status,
+        );
+
+      await this.publishEvent(event);
+
+      return updated;
     });
   }
 
   /**
-   * Restores a suspended/inactive member.
+   * Restores a suspended or inactive member.
    */
   async restoreMember(id: string) {
     return this.prisma.$transaction(async (tx) => {
@@ -269,29 +370,28 @@ export class MembersService {
         member.status,
       );
 
-      return tx.member.update({
+      const updated = await tx.member.update({
         where: { id },
 
         data: {
           status,
         },
       });
+
+      const event =
+        this.events.memberRestored(
+          updated.id,
+          member.status,
+        );
+
+      await this.publishEvent(event);
+
+      return updated;
     });
   }
 
   /**
    * Renews a member's membership.
-   *
-   * Business Rules:
-   * - If the current membership has not yet expired,
-   *   extend from the existing expiry date.
-   * - Otherwise, renew from today's date.
-   *
-   * Future integrations:
-   * • Timeline
-   * • Audit
-   * • Notification
-   * • Payment
    */
   async renewMember(id: string) {
     return this.prisma.$transaction(async (tx) => {
@@ -305,19 +405,30 @@ export class MembersService {
         );
       }
 
-      const nextMembershipExpiryDate =
-        this.lifecycle.renew(
-          member.membershipExpiryDate,
-        );
+      const previousExpiry =
+        member.membershipExpiryDate;
 
-      return tx.member.update({
+      const nextExpiry =
+        this.lifecycle.renew(previousExpiry);
+
+      const updated = await tx.member.update({
         where: { id },
 
         data: {
-          membershipExpiryDate:
-            nextMembershipExpiryDate,
+          membershipExpiryDate: nextExpiry,
         },
       });
+
+      const event =
+        this.events.membershipRenewed(
+          updated.id,
+          previousExpiry,
+          nextExpiry,
+        );
+
+      await this.publishEvent(event);
+
+      return updated;
     });
   }
 
@@ -340,15 +451,48 @@ export class MembersService {
         member.status,
       );
 
-      return tx.member.update({
+      const updated = await tx.member.update({
         where: { id },
 
         data: {
           status,
         },
       });
+
+      const event =
+        this.events.memberRetired(
+          updated.id,
+          member.status,
+        );
+
+      await this.publishEvent(event);
+
+      return updated;
     });
   }
+
+  /**
+   * Publishes a member domain event.
+   *
+   * Centralizes event propagation so lifecycle methods
+   * do not duplicate orchestration logic.
+   *
+   * Future integrations:
+   * - Notifications
+   * - Email
+   * - WhatsApp
+   * - Push notifications
+   * - WebSocket
+   * - Analytics
+   */
+    private async publishEvent(
+      event: MemberEvent,
+    ): Promise<void> {
+      await this.timeline.recordLifecycle(event);
+
+      await this.audit.recordBusiness(event);
+    }
+
 
   /**
    * Updates member information.
@@ -387,4 +531,5 @@ export class MembersService {
       },
     });
   }
+
 }

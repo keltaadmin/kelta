@@ -137,10 +137,7 @@ model Member {
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
 
-  district                District @relation(
-    fields: [districtId],
-    references: [id],
-  )
+  district                District               @relation(fields: [districtId], references: [id])
 
   committeeMemberships    CommitteeMember[]
 

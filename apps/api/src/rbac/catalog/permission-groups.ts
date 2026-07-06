@@ -95,10 +95,7 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.DOCUMENT.DOWNLOAD,
   ],
 
-  REPORT_MANAGEMENT: [
-    PERMISSIONS.REPORT.VIEW,
-    PERMISSIONS.REPORT.EXPORT,
-  ],
+  REPORT_MANAGEMENT: [PERMISSIONS.REPORT.VIEW, PERMISSIONS.REPORT.EXPORT],
 
   NOTIFICATION_MANAGEMENT: [
     PERMISSIONS.NOTIFICATION.READ,
@@ -136,14 +133,8 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.SETTINGS.MANAGE,
   ],
 
-  AUDIT_MANAGEMENT: [
-    PERMISSIONS.AUDIT.VIEW,
-    PERMISSIONS.AUDIT.EXPORT,
-  ],
-} satisfies Record<
-  string,
-  readonly Permission[]
->;
+  AUDIT_MANAGEMENT: [PERMISSIONS.AUDIT.VIEW, PERMISSIONS.AUDIT.EXPORT],
+} satisfies Record<string, readonly Permission[]>;
 
 /**
  * Prevent runtime mutation of the permission catalog.
@@ -153,5 +144,4 @@ Object.freeze(PERMISSION_GROUPS);
 /**
  * All valid Permission Group identifiers.
  */
-export type PermissionGroup =
-  keyof typeof PERMISSION_GROUPS;
+export type PermissionGroup = keyof typeof PERMISSION_GROUPS;

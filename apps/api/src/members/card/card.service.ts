@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { CardPreviewDto } from './dto/card-preview.dto';
 
@@ -9,9 +6,7 @@ import { CardRendererEngine } from './renderer/engine/card-renderer.engine';
 
 @Injectable()
 export class CardService {
-  constructor(
-    private readonly renderer: CardRendererEngine,
-  ) {}
+  constructor(private readonly renderer: CardRendererEngine) {}
 
   /**
    * Returns the canonical SVG representation
@@ -38,9 +33,7 @@ export class CardService {
         success: false,
         message: 'Unable to generate member card preview.',
         error:
-          error instanceof Error
-            ? error.message
-            : 'Unknown rendering error',
+          error instanceof Error ? error.message : 'Unknown rendering error',
       });
     }
   }

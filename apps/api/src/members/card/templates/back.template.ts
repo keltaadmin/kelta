@@ -1,9 +1,6 @@
 import { MemberCardData } from '../card.types';
 
-export function buildBackTemplate(
-  member: MemberCardData,
-): string {
-
+export function buildBackTemplate(member: MemberCardData): string {
   return `
 <svg
 xmlns="http://www.w3.org/2000/svg"

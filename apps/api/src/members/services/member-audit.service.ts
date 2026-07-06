@@ -1,19 +1,12 @@
-import {
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import type { MemberEvent } from '../interfaces';
 
 @Injectable()
 export class MemberAuditService {
-  private readonly logger = new Logger(
-    MemberAuditService.name,
-  );
+  private readonly logger = new Logger(MemberAuditService.name);
 
-  async record(
-    event: MemberEvent,
-  ): Promise<void> {
+  async record(event: MemberEvent): Promise<void> {
     this.logger.log(
       JSON.stringify({
         type: 'MEMBER_AUDIT',
@@ -22,21 +15,15 @@ export class MemberAuditService {
     );
   }
 
-  async recordBusiness(
-    event: MemberEvent,
-  ): Promise<void> {
+  async recordBusiness(event: MemberEvent): Promise<void> {
     await this.record(event);
   }
 
-  async recordSecurity(
-    event: MemberEvent,
-  ): Promise<void> {
+  async recordSecurity(event: MemberEvent): Promise<void> {
     await this.record(event);
   }
 
-  async recordSystem(
-    event: MemberEvent,
-  ): Promise<void> {
+  async recordSystem(event: MemberEvent): Promise<void> {
     await this.record(event);
   }
 }

@@ -24,58 +24,36 @@ export class AuthorizationService {
    * Returns every effective permission
    * granted to the supplied role.
    */
-  getPermissions(
-    role: RoleId,
-  ): readonly Permission[] {
-    return permissionResolver.resolvePermissions(
-      role,
-    );
+  getPermissions(role: RoleId): readonly Permission[] {
+    return permissionResolver.resolvePermissions(role);
   }
 
   /**
    * Determines whether the role has
    * the specified permission.
    */
-  hasPermission(
-    role: RoleId,
-    permission: Permission,
-  ): boolean {
-    return permissionResolver.hasPermission(
-      role,
-      permission,
-    );
+  hasPermission(role: RoleId, permission: Permission): boolean {
+    return permissionResolver.hasPermission(role, permission);
   }
 
   /**
    * Determines whether the role
    * has every supplied permission.
    */
-  hasAllPermissions(
-    role: RoleId,
-    permissions: readonly Permission[],
-  ): boolean {
-    const resolved =
-      this.getPermissions(role);
+  hasAllPermissions(role: RoleId, permissions: readonly Permission[]): boolean {
+    const resolved = this.getPermissions(role);
 
-    return permissions.every(permission =>
-      resolved.includes(permission),
-    );
+    return permissions.every((permission) => resolved.includes(permission));
   }
 
   /**
    * Determines whether the role
    * has at least one supplied permission.
    */
-  hasAnyPermission(
-    role: RoleId,
-    permissions: readonly Permission[],
-  ): boolean {
-    const resolved =
-      this.getPermissions(role);
+  hasAnyPermission(role: RoleId, permissions: readonly Permission[]): boolean {
+    const resolved = this.getPermissions(role);
 
-    return permissions.some(permission =>
-      resolved.includes(permission),
-    );
+    return permissions.some((permission) => resolved.includes(permission));
   }
 
   /**
@@ -83,11 +61,7 @@ export class AuthorizationService {
    *
    * Useful for high-performance lookups.
    */
-  getPermissionSet(
-    role: RoleId,
-  ): ReadonlySet<Permission> {
-    return new Set(
-      this.getPermissions(role),
-    );
+  getPermissionSet(role: RoleId): ReadonlySet<Permission> {
+    return new Set(this.getPermissions(role));
   }
 }

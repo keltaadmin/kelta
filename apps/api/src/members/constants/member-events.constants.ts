@@ -3,7 +3,6 @@
  */
 
 export const MEMBER_EVENT = Object.freeze({
-
   CREATED: 'MEMBER_CREATED',
 
   UPDATED: 'MEMBER_UPDATED',
@@ -23,8 +22,6 @@ export const MEMBER_EVENT = Object.freeze({
   TRANSFERRED: 'MEMBER_TRANSFERRED',
 
   VERIFIED: 'MEMBER_VERIFIED',
-
 } as const);
 
-export type MemberEventType =
-  (typeof MEMBER_EVENT)[keyof typeof MEMBER_EVENT];
+export type MemberEventType = (typeof MEMBER_EVENT)[keyof typeof MEMBER_EVENT];

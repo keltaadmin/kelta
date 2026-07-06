@@ -3,7 +3,6 @@ import { CardLayout } from './layout.constants';
 import { MemberCardTheme } from '../theme/theme.interface';
 
 export interface LayoutContext {
-
   member: MemberCardData;
 
   layout: CardLayout;
@@ -13,5 +12,4 @@ export interface LayoutContext {
   qrSvg?: string;
 
   preview?: boolean;
-
 }

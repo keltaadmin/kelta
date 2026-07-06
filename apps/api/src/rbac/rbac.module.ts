@@ -18,12 +18,8 @@ import { AuthorizationService } from './services/authorization.service';
  */
 @Global()
 @Module({
-  providers: [
-    AuthorizationService,
-  ],
+  providers: [AuthorizationService],
 
-  exports: [
-    AuthorizationService,
-  ],
+  exports: [AuthorizationService],
 })
 export class RbacModule {}

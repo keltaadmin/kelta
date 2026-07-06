@@ -9,14 +9,12 @@ export class CardResponseDto {
   success!: boolean;
 
   @ApiProperty({
-    example:
-      '4d9fd91e-8b76-4bd8-97ea-cb63d02fb8d2',
+    example: '4d9fd91e-8b76-4bd8-97ea-cb63d02fb8d2',
   })
   memberId!: string;
 
   @ApiProperty({
-    example:
-      'KELTA-MEMBER-2026-0001',
+    example: 'KELTA-MEMBER-2026-0001',
   })
   memberNumber!: string;
 
@@ -31,8 +29,7 @@ export class CardResponseDto {
   mimeType!: string;
 
   @ApiProperty({
-    example:
-      'KELTA-MEMBER-2026-0001.pdf',
+    example: 'KELTA-MEMBER-2026-0001.pdf',
   })
   fileName!: string;
 
@@ -43,8 +40,7 @@ export class CardResponseDto {
   downloadUrl!: string;
 
   @ApiProperty({
-    example:
-      '2026-07-06T10:15:22.000Z',
+    example: '2026-07-06T10:15:22.000Z',
   })
   generatedAt!: Date;
 

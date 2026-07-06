@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { QRCodeService } from '../../infrastructure/qr';
+import { QRCodeService } from '../../../infrastructure/qr';
 
 import { MemberCardData } from '../card.types';
 
@@ -10,31 +10,26 @@ import { buildBackTemplate } from '../templates/back.template';
 
 @Injectable()
 export class SvgRenderer {
+  constructor(private readonly qrService: QRCodeService) {}
 
-  constructor(
-    private readonly qrService: QRCodeService,
-  ) {}
+  async renderFront(member: MemberCardData): Promise<string> {
+    const token = member.qrCode ?? member.memberNumber;
 
-  async renderFront(
-    member: MemberCardData,
-  ): Promise<string> {
+    if (!token) {
+      throw new Error('Member QR token is missing.');
+    }
 
-    const qrSvg = await this.qrService.generateSvg(
-      member.qrCodeUrl,
+    const payload = this.qrService.buildPayload(
+      'member',
+      token,
     );
 
-    return buildFrontTemplate(
-      member,
-      qrSvg,
-    );
+    const qrSvg = await this.qrService.generateSvg(payload);
+
+    return buildFrontTemplate(member, qrSvg);
   }
 
-  async renderBack(
-    member: MemberCardData,
-  ): Promise<string> {
-
-    return buildBackTemplate(
-      member,
-    );
+  async renderBack(member: MemberCardData): Promise<string> {
+    return buildBackTemplate(member);
   }
 }

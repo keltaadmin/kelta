@@ -23,5 +23,4 @@ export const MEMBER_ACTION = Object.freeze({
   VERIFY: 'member.verify',
 } as const);
 
-export type MemberAction =
-  (typeof MEMBER_ACTION)[keyof typeof MEMBER_ACTION];
+export type MemberAction = (typeof MEMBER_ACTION)[keyof typeof MEMBER_ACTION];

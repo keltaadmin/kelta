@@ -16,9 +16,7 @@ export class AuthController {
   ) {}
 
   @Get('me')
-  async me(
-    @Headers('authorization') authorization?: string,
-  ) {
+  async me(@Headers('authorization') authorization?: string) {
     if (!authorization?.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing Bearer token');
     }
@@ -26,12 +24,8 @@ export class AuthController {
     const token = authorization.substring(7);
 
     const supabaseUser =
-      await this.supabaseAuthService.verifyAccessToken(
-        token,
-      );
+      await this.supabaseAuthService.verifyAccessToken(token);
 
-    return this.authService.authenticateSupabaseUser(
-      supabaseUser,
-    );
+    return this.authService.authenticateSupabaseUser(supabaseUser);
   }
 }

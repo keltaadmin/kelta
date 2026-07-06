@@ -24,9 +24,7 @@ import { PrismaService } from '../../prisma/prisma.service';
  */
 @Injectable()
 export class DigitalIdentityService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Issues a Digital Identity.
@@ -38,77 +36,59 @@ export class DigitalIdentityService {
    * • Generates secure tokens.
    * • Creates Version 1.
    */
-  async issueIdentity(
-    memberId: string,
-  ) {
-    return this.prisma.$transaction(
-      async (tx) => {
-        const member =
-          await tx.member.findUnique({
-            where: {
-              id: memberId,
-            },
-          });
+  async issueIdentity(memberId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const member = await tx.member.findUnique({
+        where: {
+          id: memberId,
+        },
+      });
 
-        if (!member) {
-          throw new NotFoundException(
-            `Member '${memberId}' was not found.`,
-          );
-        }
+      if (!member) {
+        throw new NotFoundException(`Member '${memberId}' was not found.`);
+      }
 
-        const existing =
-          await tx.digitalIdentity.findUnique({
-            where: {
-              memberId,
-            },
-          });
+      const existing = await tx.digitalIdentity.findUnique({
+        where: {
+          memberId,
+        },
+      });
 
-        if (existing) {
-          throw new ConflictException(
-            'Digital identity already exists.',
-          );
-        }
+      if (existing) {
+        throw new ConflictException('Digital identity already exists.');
+      }
 
-        const issuedAt = new Date();
+      const issuedAt = new Date();
 
-        const expiresAt =
-          this.calculateExpiry(
-            issuedAt,
-          );
+      const expiresAt = this.calculateExpiry(issuedAt);
 
-        return tx.digitalIdentity.create({
-          data: {
-            memberId,
+      return tx.digitalIdentity.create({
+        data: {
+          memberId,
 
-            memberNumber:
-              member.memberNumber,
+          memberNumber: member.memberNumber,
 
-            publicToken:
-              this.generatePublicToken(),
+          publicToken: this.generatePublicToken(),
 
-            qrToken:
-              this.generateQrToken(),
+          qrToken: this.generateQrToken(),
 
-            cardVersion: 1,
+          cardVersion: 1,
 
-            regeneratedCount: 0,
+          regeneratedCount: 0,
 
-            issuedAt,
+          issuedAt,
 
-            expiresAt,
-          },
-        });
-      },
-    );
+          expiresAt,
+        },
+      });
+    });
   }
 
   /**
    * Returns Digital Identity
    * for a Member.
    */
-  async findByMemberId(
-    memberId: string,
-  ) {
+  async findByMemberId(memberId: string) {
     return this.prisma.digitalIdentity.findUnique({
       where: {
         memberId,
@@ -124,9 +104,7 @@ export class DigitalIdentityService {
    * Finds an identity
    * by Public Token.
    */
-  async findByPublicToken(
-    publicToken: string,
-  ) {
+  async findByPublicToken(publicToken: string) {
     return this.prisma.digitalIdentity.findUnique({
       where: {
         publicToken,
@@ -142,9 +120,7 @@ export class DigitalIdentityService {
    * Finds an identity
    * by QR Token.
    */
-  async findByQrToken(
-    qrToken: string,
-  ) {
+  async findByQrToken(qrToken: string) {
     return this.prisma.digitalIdentity.findUnique({
       where: {
         qrToken,
@@ -156,7 +132,7 @@ export class DigitalIdentityService {
     });
   }
 
-    /**
+  /**
    * Reissues an existing Digital Identity.
    *
    * Rules
@@ -168,74 +144,63 @@ export class DigitalIdentityService {
    * • Clears revocation state.
    * • Resets issued/expiry dates.
    */
-  async reissueIdentity(
-    memberId: string,
-  ) {
-    return this.prisma.$transaction(
-      async (tx) => {
-        const identity =
-          await tx.digitalIdentity.findUnique({
-            where: {
-              memberId,
-            },
-          });
+  async reissueIdentity(memberId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const identity = await tx.digitalIdentity.findUnique({
+        where: {
+          memberId,
+        },
+      });
 
-        if (!identity) {
-          throw new NotFoundException(
-            `Digital identity for member '${memberId}' was not found.`,
-          );
-        }
+      if (!identity) {
+        throw new NotFoundException(
+          `Digital identity for member '${memberId}' was not found.`,
+        );
+      }
 
-        const issuedAt = new Date();
+      const issuedAt = new Date();
 
-        const expiresAt =
-          this.calculateExpiry(
-            issuedAt,
-          );
+      const expiresAt = this.calculateExpiry(issuedAt);
 
-        const updated =
-          await tx.digitalIdentity.update({
-            where: {
-              memberId,
-            },
+      const updated = await tx.digitalIdentity.update({
+        where: {
+          memberId,
+        },
 
-            data: {
-              publicToken:
-                this.generatePublicToken(),
+        data: {
+          publicToken: this.generatePublicToken(),
 
-              qrToken:
-                this.generateQrToken(),
+          qrToken: this.generateQrToken(),
 
-              cardVersion: {
-                increment: 1,
-              },
+          cardVersion: {
+            increment: 1,
+          },
 
-              regeneratedCount: {
-                increment: 1,
-              },
+          regeneratedCount: {
+            increment: 1,
+          },
 
-              issuedAt,
+          issuedAt,
 
-              expiresAt,
+          expiresAt,
 
-              revokedAt: null,
-            },
+          revokedAt: null,
+        },
 
-            include: {
-              member: true,
-            },
-          });
+        include: {
+          member: true,
+        },
+      });
 
-        /**
-         * Timeline / Audit
-         * ----------------
-         * Will be integrated
-         * in Sprint 3D.
-         */
+      /**
+       * Timeline / Audit
+       * ----------------
+       * Will be integrated
+       * in Sprint 3D.
+       */
 
-        return updated;
-      },
-    );
+      return updated;
+    });
   }
 
   /**
@@ -247,57 +212,49 @@ export class DigitalIdentityService {
    * • Physical deletion is never performed.
    * • Revocation timestamp is recorded.
    */
-  async revokeIdentity(
-    memberId: string,
-  ) {
-    return this.prisma.$transaction(
-      async (tx) => {
-        const identity =
-          await tx.digitalIdentity.findUnique({
-            where: {
-              memberId,
-            },
-          });
+  async revokeIdentity(memberId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const identity = await tx.digitalIdentity.findUnique({
+        where: {
+          memberId,
+        },
+      });
 
-        if (!identity) {
-          throw new NotFoundException(
-            `Digital identity for member '${memberId}' was not found.`,
-          );
-        }
+      if (!identity) {
+        throw new NotFoundException(
+          `Digital identity for member '${memberId}' was not found.`,
+        );
+      }
 
-        const updated =
-          await tx.digitalIdentity.update({
-            where: {
-              memberId,
-            },
+      const updated = await tx.digitalIdentity.update({
+        where: {
+          memberId,
+        },
 
-            data: {
-              revokedAt: new Date(),
-            },
+        data: {
+          revokedAt: new Date(),
+        },
 
-            include: {
-              member: true,
-            },
-          });
+        include: {
+          member: true,
+        },
+      });
 
-        /**
-         * Timeline / Audit
-         * ----------------
-         * Sprint 3D
-         */
+      /**
+       * Timeline / Audit
+       * ----------------
+       * Sprint 3D
+       */
 
-        return updated;
-      },
-    );
+      return updated;
+    });
   }
 
   /**
    * Returns whether
    * an identity has expired.
    */
-  isExpired(
-    expiresAt: Date | null,
-  ): boolean {
+  isExpired(expiresAt: Date | null): boolean {
     if (!expiresAt) {
       return false;
     }
@@ -309,13 +266,11 @@ export class DigitalIdentityService {
    * Returns whether
    * an identity has been revoked.
    */
-  isRevoked(
-    revokedAt: Date | null,
-  ): boolean {
+  isRevoked(revokedAt: Date | null): boolean {
     return revokedAt !== null;
   }
 
-    /**
+  /**
    * Generates a public verification token.
    */
   private generatePublicToken(): string {
@@ -335,16 +290,11 @@ export class DigitalIdentityService {
    * Current policy:
    * Valid for one year from the issue date.
    */
-  private calculateExpiry(
-    issuedAt: Date,
-  ): Date {
+  private calculateExpiry(issuedAt: Date): Date {
     const expiry = new Date(issuedAt);
 
-    expiry.setFullYear(
-      expiry.getFullYear() + 1,
-    );
+    expiry.setFullYear(expiry.getFullYear() + 1);
 
     return expiry;
   }
 }
-

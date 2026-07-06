@@ -16,20 +16,13 @@ import type { PermissionGroup } from '../catalog/permission-groups';
  * Permission Groups
  */
 export class RoleResolver {
-  resolveRole(
-    roleId: RoleId,
-  ): RoleDefinition {
+  resolveRole(roleId: RoleId): RoleDefinition {
     return getRole(roleId);
   }
 
-  resolvePermissionGroups(
-  roleId: RoleId,
-): readonly PermissionGroup[] {
-  return this.resolveRole(
-    roleId,
-  ).permissionGroups;
-}
+  resolvePermissionGroups(roleId: RoleId): readonly PermissionGroup[] {
+    return this.resolveRole(roleId).permissionGroups;
+  }
 }
 
-export const roleResolver =
-  new RoleResolver();
+export const roleResolver = new RoleResolver();

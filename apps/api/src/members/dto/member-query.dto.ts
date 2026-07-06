@@ -12,10 +12,7 @@ import {
   Min,
 } from 'class-validator';
 
-import {
-  Gender,
-  MemberStatus,
-} from '@prisma/client';
+import { Gender, MemberStatus } from '@prisma/client';
 
 export class MemberQueryDto {
   /**
@@ -91,9 +88,6 @@ export class MemberQueryDto {
   sortBy: string = 'firstName';
 
   @IsOptional()
-  @IsIn([
-    'asc',
-    'desc',
-  ])
+  @IsIn(['asc', 'desc'])
   sortOrder: 'asc' | 'desc' = 'asc';
 }

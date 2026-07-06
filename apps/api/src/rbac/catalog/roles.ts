@@ -40,19 +40,13 @@ function role(
 
     assignableBy: [],
 
-    permissionGroups:
-      ROLE_PROFILES[
-        profile
-      ].permissionGroups,
+    permissionGroups: ROLE_PROFILES[profile].permissionGroups,
 
-    configurable:
-      options?.configurable ?? false,
+    configurable: options?.configurable ?? false,
 
-    visibleInDirectory:
-      options?.visibleInDirectory ?? true,
+    visibleInDirectory: options?.visibleInDirectory ?? true,
 
-    defaultLandingPage:
-      options?.defaultLandingPage,
+    defaultLandingPage: options?.defaultLandingPage,
   };
 }
 
@@ -150,11 +144,8 @@ export const ROLES = {
 
 Object.freeze(ROLES);
 
-export type RoleId =
-  keyof typeof ROLES;
+export type RoleId = keyof typeof ROLES;
 
-export function getRole(
-  role: RoleId,
-): RoleDefinition {
+export function getRole(role: RoleId): RoleDefinition {
   return ROLES[role];
 }

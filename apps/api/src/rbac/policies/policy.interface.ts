@@ -1,10 +1,6 @@
-import type {
-  AuthorizationContext,
-} from '../authorization';
+import type { AuthorizationContext } from '../authorization';
 
-import type {
-  AuthorizationResult,
-} from '../authorization';
+import type { AuthorizationResult } from '../authorization';
 
 /**
  * Enterprise Authorization Policy
@@ -22,9 +18,7 @@ import type {
  * • Time restrictions
  * • Future ABAC rules
  */
-export interface AuthorizationPolicy<
-  TResource = unknown,
-> {
+export interface AuthorizationPolicy<TResource = unknown> {
   /**
    * Human-readable policy name.
    */
@@ -37,7 +31,5 @@ export interface AuthorizationPolicy<
    */
   evaluate(
     context: AuthorizationContext<TResource>,
-  ):
-    | AuthorizationResult
-    | Promise<AuthorizationResult>;
+  ): AuthorizationResult | Promise<AuthorizationResult>;
 }

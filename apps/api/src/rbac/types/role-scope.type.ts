@@ -18,5 +18,4 @@ export const ROLE_SCOPES = {
   PUBLIC: 'PUBLIC',
 } as const;
 
-export type RoleScope =
-  (typeof ROLE_SCOPES)[keyof typeof ROLE_SCOPES];
+export type RoleScope = (typeof ROLE_SCOPES)[keyof typeof ROLE_SCOPES];

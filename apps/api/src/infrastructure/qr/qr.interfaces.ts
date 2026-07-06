@@ -6,7 +6,6 @@ import type { QRResourceType } from './qr.types';
  * Versioned to allow future upgrades.
  */
 export interface QRPayload {
-
   readonly v: number;
 
   readonly issuer: string;
@@ -20,7 +19,6 @@ export interface QRPayload {
  * Generated QR response.
  */
 export interface QRResult {
-
   readonly payload: QRPayload;
 
   readonly data: string;

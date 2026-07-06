@@ -106,11 +106,7 @@ export const ROLE_PROFILES = {
     'COMMITTEE_PROFILE',
     'Committee',
     'Committee management.',
-    [
-      'MEETING_MANAGEMENT',
-      'DOCUMENT_MANAGEMENT',
-      'REPORT_MANAGEMENT',
-    ],
+    ['MEETING_MANAGEMENT', 'DOCUMENT_MANAGEMENT', 'REPORT_MANAGEMENT'],
     {
       icon: 'users',
       color: '#9333ea',
@@ -121,10 +117,7 @@ export const ROLE_PROFILES = {
     'AUDITOR_PROFILE',
     'Auditor',
     'Audit and reporting.',
-    [
-      'AUDIT_MANAGEMENT',
-      'REPORT_MANAGEMENT',
-    ],
+    ['AUDIT_MANAGEMENT', 'REPORT_MANAGEMENT'],
     {
       icon: 'clipboard-check',
       color: '#ea580c',
@@ -156,11 +149,8 @@ export const ROLE_PROFILES = {
 
 Object.freeze(ROLE_PROFILES);
 
-export type RoleProfile =
-  keyof typeof ROLE_PROFILES;
+export type RoleProfile = keyof typeof ROLE_PROFILES;
 
-export function getRoleProfile(
-  profile: RoleProfile,
-): RoleProfileDefinition {
+export function getRoleProfile(profile: RoleProfile): RoleProfileDefinition {
   return ROLE_PROFILES[profile];
 }

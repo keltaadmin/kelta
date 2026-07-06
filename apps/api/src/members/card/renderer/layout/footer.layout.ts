@@ -1,28 +1,18 @@
 import { LayoutContext } from './layout.context';
 import { SvgFragment } from './layout.types';
 
-export function renderFooter(
-  context: LayoutContext,
-): SvgFragment {
-
-  const {
-    layout,
-    theme,
-    member,
-  } = context;
+export function renderFooter(context: LayoutContext): SvgFragment {
+  const { layout, theme, member } = context;
 
   const footer = layout.footer;
 
-  const issueDate =
-    member.issueDate.toLocaleDateString('en-IN');
+  const issueDate = member.issueDate.toLocaleDateString('en-IN');
 
-  const expiryDate =
-    member.expiryDate
-      ? member.expiryDate.toLocaleDateString('en-IN')
-      : 'Lifetime';
+  const expiryDate = member.expiryDate
+    ? member.expiryDate.toLocaleDateString('en-IN')
+    : 'Lifetime';
 
   return {
-
     markup: `
 
 <line
@@ -70,7 +60,5 @@ ${theme.footerText}
 `,
 
     defs: [],
-
   };
-
 }

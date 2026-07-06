@@ -5,7 +5,6 @@ export function buildFrontTemplate(
   member: MemberCardData,
   qrSvg: string,
 ): string {
-
   const t = DEFAULT_MEMBER_CARD_THEME;
 
   return `

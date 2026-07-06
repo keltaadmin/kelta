@@ -8,19 +8,9 @@ import { SupabaseAuthService } from './services/supabase-auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
-  imports: [
-    UsersModule,
-  ],
-  controllers: [
-    AuthController,
-  ],
-  providers: [
-    AuthService,
-    SupabaseAuthService,
-    JwtAuthGuard,
-  ],
-  exports: [
-    AuthService,
-  ],
+  imports: [UsersModule],
+  controllers: [AuthController],
+  providers: [AuthService, SupabaseAuthService, JwtAuthGuard],
+  exports: [AuthService],
 })
 export class AuthModule {}

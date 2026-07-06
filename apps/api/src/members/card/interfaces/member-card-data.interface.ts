@@ -9,7 +9,6 @@ import { MemberCardStatus } from '../card.enums';
  * ============================================================================
  */
 export interface MemberCardData {
-
   /**
    * Internal UUID
    */
@@ -91,5 +90,4 @@ export interface MemberCardData {
    * Current member status.
    */
   status: MemberCardStatus;
-
 }

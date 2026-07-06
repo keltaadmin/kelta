@@ -51,10 +51,7 @@ export class UsersService {
     });
   }
 
-  async createFromSupabase(data: {
-    supabaseAuthId: string;
-    email: string;
-  }) {
+  async createFromSupabase(data: { supabaseAuthId: string; email: string }) {
     return this.prisma.user.create({
       data: {
         supabaseAuthId: data.supabaseAuthId,

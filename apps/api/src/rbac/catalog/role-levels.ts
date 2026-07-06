@@ -29,5 +29,4 @@ export const ROLE_LEVELS = {
   PUBLIC: 0,
 } as const;
 
-export type RoleLevel =
-  (typeof ROLE_LEVELS)[keyof typeof ROLE_LEVELS];
+export type RoleLevel = (typeof ROLE_LEVELS)[keyof typeof ROLE_LEVELS];

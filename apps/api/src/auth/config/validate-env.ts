@@ -5,7 +5,6 @@ export function validateEnv(
     'SUPABASE_URL',
     'SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
-
   ];
 
   const missing = required.filter(

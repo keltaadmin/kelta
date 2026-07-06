@@ -1,16 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import {
-  MemberStatus,
-  Prisma,
-} from '@prisma/client';
+import { MemberStatus, Prisma } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { NumberingService } from '../numbering/numbering.service';
-
 
 import {
   MemberLifecycleService,
@@ -25,7 +18,6 @@ import type { MemberEvent } from './interfaces';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberQueryDto } from './dto/member-query.dto';
-
 
 /**
  * Enterprise Members Service
@@ -48,34 +40,33 @@ import { MemberQueryDto } from './dto/member-query.dto';
 @Injectable()
 export class MembersService {
   constructor(
-      private readonly prisma: PrismaService,
+    private readonly prisma: PrismaService,
 
-      private readonly numberingService: NumberingService,
+    private readonly numberingService: NumberingService,
 
-      private readonly lifecycle: MemberLifecycleService,
+    private readonly lifecycle: MemberLifecycleService,
 
-      private readonly timeline: MemberTimelineService,
+    private readonly timeline: MemberTimelineService,
 
-      private readonly audit: MemberAuditService,
+    private readonly audit: MemberAuditService,
 
-      private readonly events: MemberEventFactory,
+    private readonly events: MemberEventFactory,
   ) {}
 
-
   /**
- * Returns a paginated member directory.
- *
- * Supports:
- * - Search
- * - Status filtering
- * - District filtering
- * - Gender filtering
- * - Verification filtering
- * - Life member filtering
- * - Joining date range
- * - Dynamic sorting
- * - Pagination
- */
+   * Returns a paginated member directory.
+   *
+   * Supports:
+   * - Search
+   * - Status filtering
+   * - District filtering
+   * - Gender filtering
+   * - Verification filtering
+   * - Life member filtering
+   * - Joining date range
+   * - Dynamic sorting
+   * - Pagination
+   */
   async findAll(query: MemberQueryDto) {
     const {
       page,
@@ -177,26 +168,25 @@ export class MembersService {
       [sortBy]: sortOrder,
     };
 
-    const [items, total] =
-      await this.prisma.$transaction([
-        this.prisma.member.findMany({
-          where,
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.member.findMany({
+        where,
 
-          include: {
-            district: true,
-          },
+        include: {
+          district: true,
+        },
 
-          orderBy,
+        orderBy,
 
-          skip: (page - 1) * limit,
+        skip: (page - 1) * limit,
 
-          take: limit,
-        }),
+        take: limit,
+      }),
 
-        this.prisma.member.count({
-          where,
-        }),
-      ]);
+      this.prisma.member.count({
+        where,
+      }),
+    ]);
 
     const totalPages = Math.ceil(total / limit);
 
@@ -223,19 +213,16 @@ export class MembersService {
    * Returns a single member.
    */
   async findOne(id: string) {
-    const member =
-      await this.prisma.member.findUnique({
-        where: { id },
+    const member = await this.prisma.member.findUnique({
+      where: { id },
 
-        include: {
-          district: true,
-        },
-      });
+      include: {
+        district: true,
+      },
+    });
 
     if (!member) {
-      throw new NotFoundException(
-        `Member '${id}' was not found.`,
-      );
+      throw new NotFoundException(`Member '${id}' was not found.`);
     }
 
     return member;
@@ -245,21 +232,16 @@ export class MembersService {
    * Creates a new member.
    */
   async create(dto: CreateMemberDto) {
-    return this.prisma.$transaction(
-      async (tx) => {
-        const memberNumber =
-          await this.numberingService.generateMemberNumber(
-            tx,
-          );
+    return this.prisma.$transaction(async (tx) => {
+      const memberNumber = await this.numberingService.generateMemberNumber(tx);
 
-        return tx.member.create({
-          data: {
-            ...dto,
-            memberNumber,
-          },
-        });
-      },
-    );
+      return tx.member.create({
+        data: {
+          ...dto,
+          memberNumber,
+        },
+      });
+    });
   }
 
   /**
@@ -279,17 +261,12 @@ export class MembersService {
       });
 
       if (!member) {
-        throw new NotFoundException(
-          `Member '${id}' was not found.`,
-        );
+        throw new NotFoundException(`Member '${id}' was not found.`);
       }
 
-      const status = this.lifecycle.activate(
-        member.status,
-      );
+      const status = this.lifecycle.activate(member.status);
 
-      const activatedAt =
-        member.membershipActivatedAt ?? new Date();
+      const activatedAt = member.membershipActivatedAt ?? new Date();
 
       const updated = await tx.member.update({
         where: { id },
@@ -300,11 +277,7 @@ export class MembersService {
         },
       });
 
-      const event =
-        this.events.memberActivated(
-          updated.id,
-          member.status,
-        );
+      const event = this.events.memberActivated(updated.id, member.status);
 
       await this.publishEvent(event);
 
@@ -322,14 +295,10 @@ export class MembersService {
       });
 
       if (!member) {
-        throw new NotFoundException(
-          `Member '${id}' was not found.`,
-        );
+        throw new NotFoundException(`Member '${id}' was not found.`);
       }
 
-      const status = this.lifecycle.suspend(
-        member.status,
-      );
+      const status = this.lifecycle.suspend(member.status);
 
       const updated = await tx.member.update({
         where: { id },
@@ -339,11 +308,7 @@ export class MembersService {
         },
       });
 
-      const event =
-        this.events.memberSuspended(
-          updated.id,
-          member.status,
-        );
+      const event = this.events.memberSuspended(updated.id, member.status);
 
       await this.publishEvent(event);
 
@@ -361,14 +326,10 @@ export class MembersService {
       });
 
       if (!member) {
-        throw new NotFoundException(
-          `Member '${id}' was not found.`,
-        );
+        throw new NotFoundException(`Member '${id}' was not found.`);
       }
 
-      const status = this.lifecycle.restore(
-        member.status,
-      );
+      const status = this.lifecycle.restore(member.status);
 
       const updated = await tx.member.update({
         where: { id },
@@ -378,11 +339,7 @@ export class MembersService {
         },
       });
 
-      const event =
-        this.events.memberRestored(
-          updated.id,
-          member.status,
-        );
+      const event = this.events.memberRestored(updated.id, member.status);
 
       await this.publishEvent(event);
 
@@ -400,16 +357,12 @@ export class MembersService {
       });
 
       if (!member) {
-        throw new NotFoundException(
-          `Member '${id}' was not found.`,
-        );
+        throw new NotFoundException(`Member '${id}' was not found.`);
       }
 
-      const previousExpiry =
-        member.membershipExpiryDate;
+      const previousExpiry = member.membershipExpiryDate;
 
-      const nextExpiry =
-        this.lifecycle.renew(previousExpiry);
+      const nextExpiry = this.lifecycle.renew(previousExpiry);
 
       const updated = await tx.member.update({
         where: { id },
@@ -419,12 +372,11 @@ export class MembersService {
         },
       });
 
-      const event =
-        this.events.membershipRenewed(
-          updated.id,
-          previousExpiry,
-          nextExpiry,
-        );
+      const event = this.events.membershipRenewed(
+        updated.id,
+        previousExpiry,
+        nextExpiry,
+      );
 
       await this.publishEvent(event);
 
@@ -442,14 +394,10 @@ export class MembersService {
       });
 
       if (!member) {
-        throw new NotFoundException(
-          `Member '${id}' was not found.`,
-        );
+        throw new NotFoundException(`Member '${id}' was not found.`);
       }
 
-      const status = this.lifecycle.retire(
-        member.status,
-      );
+      const status = this.lifecycle.retire(member.status);
 
       const updated = await tx.member.update({
         where: { id },
@@ -459,11 +407,7 @@ export class MembersService {
         },
       });
 
-      const event =
-        this.events.memberRetired(
-          updated.id,
-          member.status,
-        );
+      const event = this.events.memberRetired(updated.id, member.status);
 
       await this.publishEvent(event);
 
@@ -485,14 +429,11 @@ export class MembersService {
    * - WebSocket
    * - Analytics
    */
-    private async publishEvent(
-      event: MemberEvent,
-    ): Promise<void> {
-      await this.timeline.recordLifecycle(event);
+  private async publishEvent(event: MemberEvent): Promise<void> {
+    await this.timeline.recordLifecycle(event);
 
-      await this.audit.recordBusiness(event);
-    }
-
+    await this.audit.recordBusiness(event);
+  }
 
   /**
    * Updates member information.
@@ -501,10 +442,7 @@ export class MembersService {
    * Business lifecycle operations
    * should NOT use this method.
    */
-  async update(
-    id: string,
-    dto: UpdateMemberDto,
-  ) {
+  async update(id: string, dto: UpdateMemberDto) {
     await this.findOne(id);
 
     return this.prisma.member.update({
@@ -531,5 +469,4 @@ export class MembersService {
       },
     });
   }
-
 }

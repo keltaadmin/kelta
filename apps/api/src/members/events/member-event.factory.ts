@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  MEMBER_EVENT,
-  type MemberEventType,
-} from '../constants';
+import { MEMBER_EVENT, type MemberEventType } from '../constants';
 
 import type { MemberEvent } from '../interfaces';
 
@@ -29,14 +26,9 @@ export class MemberEventFactory {
     previousStatus: string,
     performedBy?: string,
   ): MemberEvent {
-    return this.create(
-      MEMBER_EVENT.ACTIVATED,
-      memberId,
-      performedBy,
-      {
-        previousStatus,
-      },
-    );
+    return this.create(MEMBER_EVENT.ACTIVATED, memberId, performedBy, {
+      previousStatus,
+    });
   }
 
   memberSuspended(
@@ -44,14 +36,9 @@ export class MemberEventFactory {
     previousStatus: string,
     performedBy?: string,
   ): MemberEvent {
-    return this.create(
-      MEMBER_EVENT.SUSPENDED,
-      memberId,
-      performedBy,
-      {
-        previousStatus,
-      },
-    );
+    return this.create(MEMBER_EVENT.SUSPENDED, memberId, performedBy, {
+      previousStatus,
+    });
   }
 
   memberRestored(
@@ -59,14 +46,9 @@ export class MemberEventFactory {
     previousStatus: string,
     performedBy?: string,
   ): MemberEvent {
-    return this.create(
-      MEMBER_EVENT.RESTORED,
-      memberId,
-      performedBy,
-      {
-        previousStatus,
-      },
-    );
+    return this.create(MEMBER_EVENT.RESTORED, memberId, performedBy, {
+      previousStatus,
+    });
   }
 
   membershipRenewed(
@@ -75,15 +57,10 @@ export class MemberEventFactory {
     nextExpiry: Date,
     performedBy?: string,
   ): MemberEvent {
-    return this.create(
-      MEMBER_EVENT.RENEWED,
-      memberId,
-      performedBy,
-      {
-        previousExpiry,
-        nextExpiry,
-      },
-    );
+    return this.create(MEMBER_EVENT.RENEWED, memberId, performedBy, {
+      previousExpiry,
+      nextExpiry,
+    });
   }
 
   memberRetired(
@@ -91,13 +68,8 @@ export class MemberEventFactory {
     previousStatus: string,
     performedBy?: string,
   ): MemberEvent {
-    return this.create(
-      MEMBER_EVENT.RETIRED,
-      memberId,
-      performedBy,
-      {
-        previousStatus,
-      },
-    );
+    return this.create(MEMBER_EVENT.RETIRED, memberId, performedBy, {
+      previousStatus,
+    });
   }
 }

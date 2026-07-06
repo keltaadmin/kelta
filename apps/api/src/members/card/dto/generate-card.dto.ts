@@ -1,14 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
 
-import {
-  MemberCardFormat,
-  MemberCardTheme,
-} from '../card.enums';
+import { MemberCardFormat, MemberCardTheme } from '../card.enums';
 
 export class GenerateCardDto {
   @ApiProperty({
@@ -29,8 +22,7 @@ export class GenerateCardDto {
   theme?: MemberCardTheme = MemberCardTheme.DEFAULT;
 
   @ApiPropertyOptional({
-    description:
-      'Generate without storing the document.',
+    description: 'Generate without storing the document.',
     default: false,
   })
   @IsOptional()
@@ -38,8 +30,7 @@ export class GenerateCardDto {
   preview?: boolean = false;
 
   @ApiPropertyOptional({
-    description:
-      'Force regeneration even if a cached copy exists.',
+    description: 'Force regeneration even if a cached copy exists.',
     default: false,
   })
   @IsOptional()

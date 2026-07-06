@@ -7,11 +7,10 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { NumberingModule } from '../numbering/numbering.module';
 
 import { MemberEventFactory } from './events';
-import { MemberCardModule } from './card';
+import { CardModule } from './card';
 
 import {
   MemberAuditService,
-  MemberCardService,
   MemberDirectoryService,
   MemberDocumentService,
   MemberLifecycleService,
@@ -20,10 +19,7 @@ import {
   MemberTransferService,
 } from './services';
 
-import {
-  DigitalIdentityService,
-  MemberVerificationService,
-} from './services';
+import { DigitalIdentityService, MemberVerificationService } from './services';
 
 import { QRModule } from '../infrastructure/qr';
 
@@ -41,23 +37,15 @@ import { QRModule } from '../infrastructure/qr';
  * - Transfers
  */
 @Module({
-  imports: [
-    PrismaModule,
-    NumberingModule,
-    QRModule,
-    MemberCardModule,
-  ],
+  imports: [PrismaModule, NumberingModule, QRModule, CardModule],
 
-  controllers: [
-    MembersController,
-  ],
+  controllers: [MembersController],
 
   providers: [
     MembersService,
 
     MemberLifecycleService,
     MemberDirectoryService,
-    MemberCardService,
     MemberDocumentService,
     MemberRenewalService,
     MemberTimelineService,
@@ -70,8 +58,6 @@ import { QRModule } from '../infrastructure/qr';
     MemberVerificationService,
   ],
 
-  exports: [
-    MembersService,
-  ],
+  exports: [MembersService],
 })
 export class MembersModule {}

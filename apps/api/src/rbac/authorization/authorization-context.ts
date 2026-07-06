@@ -18,9 +18,7 @@ import type { RoleId } from '../catalog/roles';
  * • Policy Engine
  * • Multi-tenancy
  */
-export interface AuthorizationContext<
-  TResource = unknown,
-> {
+export interface AuthorizationContext<TResource = unknown> {
   /**
    * Authenticated User ID.
    */
@@ -64,8 +62,5 @@ export interface AuthorizationContext<
   /**
    * Optional request metadata.
    */
-  metadata?: Record<
-    string,
-    unknown
-  >;
+  metadata?: Record<string, unknown>;
 }

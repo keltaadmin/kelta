@@ -43,25 +43,19 @@ import { MemberQueryDto } from './dto/member-query.dto';
  */
 @Controller('members')
 export class MembersController {
-  constructor(
-    private readonly membersService: MembersService,
-  ) {}
+  constructor(private readonly membersService: MembersService) {}
 
   // ---------------------------------------------------------------------------
   // Directory
   // ---------------------------------------------------------------------------
 
   @Get()
-  async findAll(
-    @Query() query: MemberQueryDto,
-  ) {
+  async findAll(@Query() query: MemberQueryDto) {
     return this.membersService.findAll(query);
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-  ) {
+  async findOne(@Param('id') id: string) {
     return this.membersService.findOne(id);
   }
 
@@ -70,24 +64,17 @@ export class MembersController {
   // ---------------------------------------------------------------------------
 
   @Post()
-  async create(
-    @Body() dto: CreateMemberDto,
-  ) {
+  async create(@Body() dto: CreateMemberDto) {
     return this.membersService.create(dto);
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateMemberDto,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateMemberDto) {
     return this.membersService.update(id, dto);
   }
 
   @Delete(':id')
-  async remove(
-    @Param('id') id: string,
-  ) {
+  async remove(@Param('id') id: string) {
     return this.membersService.remove(id);
   }
 
@@ -105,9 +92,7 @@ export class MembersController {
    * - Digital ID generation
    */
   @Post(':id/activate')
-  async activate(
-    @Param('id') id: string,
-  ) {
+  async activate(@Param('id') id: string) {
     return this.membersService.activateMember(id);
   }
 
@@ -117,9 +102,7 @@ export class MembersController {
    * Placeholder for Sprint 4.
    */
   @Post(':id/suspend')
-  async suspend(
-    @Param('id') id: string,
-  ) {
+  async suspend(@Param('id') id: string) {
     return this.membersService.suspendMember(id);
   }
 
@@ -127,9 +110,7 @@ export class MembersController {
    * Restore a suspended member.
    */
   @Post(':id/restore')
-  async restore(
-    @Param('id') id: string,
-  ) {
+  async restore(@Param('id') id: string) {
     return this.membersService.restoreMember(id);
   }
 
@@ -137,9 +118,7 @@ export class MembersController {
    * Renew membership.
    */
   @Post(':id/renew')
-  async renew(
-    @Param('id') id: string,
-  ) {
+  async renew(@Param('id') id: string) {
     return this.membersService.renewMember(id);
   }
 
@@ -147,9 +126,7 @@ export class MembersController {
    * Retire a member.
    */
   @Post(':id/retire')
-  async retire(
-    @Param('id') id: string,
-  ) {
+  async retire(@Param('id') id: string) {
     return this.membersService.retireMember(id);
   }
 }

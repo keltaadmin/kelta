@@ -5,17 +5,12 @@ import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  async authenticateSupabaseUser(
-    supabaseUser: SupabaseUser,
-  ) {
-    const existingUser =
-      await this.usersService.findBySupabaseId(
-        supabaseUser.id,
-      );
+  async authenticateSupabaseUser(supabaseUser: SupabaseUser) {
+    const existingUser = await this.usersService.findBySupabaseId(
+      supabaseUser.id,
+    );
 
     const user =
       existingUser ??

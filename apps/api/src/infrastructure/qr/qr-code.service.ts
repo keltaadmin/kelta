@@ -2,20 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import * as QRCode from 'qrcode';
 
-import {
-  QR_DEFAULTS,
-  QR_ISSUER,
-  QR_PAYLOAD_VERSION,
-} from './qr.constants';
+import { QR_DEFAULTS, QR_ISSUER, QR_PAYLOAD_VERSION } from './qr.constants';
 
-import type {
-  QRPayload,
-  QRResult,
-} from './qr.interfaces';
+import type { QRPayload, QRResult } from './qr.interfaces';
 
-import type {
-  QRResourceType,
-} from './qr.types';
+import type { QRResourceType } from './qr.types';
 
 /**
  * ============================================================
@@ -36,14 +27,10 @@ import type {
  */
 @Injectable()
 export class QRCodeService {
-
   /**
    * Builds a versioned QR payload.
    */
-  buildPayload(
-    type: QRResourceType,
-    token: string,
-  ): QRPayload {
+  buildPayload(type: QRResourceType, token: string): QRPayload {
     return {
       v: QR_PAYLOAD_VERSION,
 
@@ -58,9 +45,7 @@ export class QRCodeService {
   /**
    * Converts payload into JSON.
    */
-  serializePayload(
-    payload: QRPayload,
-  ): string {
+  serializePayload(payload: QRPayload): string {
     return JSON.stringify(payload);
   }
 
@@ -81,9 +66,7 @@ export class QRCodeService {
   /**
    * Generates SVG.
    */
-  async generateSvg(
-    payload: QRPayload,
-  ): Promise<string> {
+  async generateSvg(payload: QRPayload): Promise<string> {
     return QRCode.toString(
       this.serializePayload(payload),
 
@@ -94,8 +77,7 @@ export class QRCodeService {
 
         margin: QR_DEFAULTS.MARGIN,
 
-        errorCorrectionLevel:
-          QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
+        errorCorrectionLevel: QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
       },
     );
   }
@@ -103,9 +85,7 @@ export class QRCodeService {
   /**
    * Generates PNG Data URL.
    */
-  async generateDataUrl(
-    payload: QRPayload,
-  ): Promise<string> {
+  async generateDataUrl(payload: QRPayload): Promise<string> {
     return QRCode.toDataURL(
       this.serializePayload(payload),
 
@@ -114,8 +94,7 @@ export class QRCodeService {
 
         margin: QR_DEFAULTS.MARGIN,
 
-        errorCorrectionLevel:
-          QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
+        errorCorrectionLevel: QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
       },
     );
   }
@@ -123,9 +102,7 @@ export class QRCodeService {
   /**
    * Generates PNG Buffer.
    */
-  async generateBuffer(
-    payload: QRPayload,
-  ): Promise<Buffer> {
+  async generateBuffer(payload: QRPayload): Promise<Buffer> {
     return QRCode.toBuffer(
       this.serializePayload(payload),
 
@@ -134,8 +111,7 @@ export class QRCodeService {
 
         margin: QR_DEFAULTS.MARGIN,
 
-        errorCorrectionLevel:
-          QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
+        errorCorrectionLevel: QR_DEFAULTS.ERROR_CORRECTION_LEVEL,
       },
     );
   }
@@ -143,18 +119,10 @@ export class QRCodeService {
   /**
    * Generates Base64 PNG.
    */
-  async generateBase64(
-    payload: QRPayload,
-  ): Promise<string> {
-    const dataUrl =
-      await this.generateDataUrl(
-        payload,
-      );
+  async generateBase64(payload: QRPayload): Promise<string> {
+    const dataUrl = await this.generateDataUrl(payload);
 
-    return dataUrl.replace(
-      /^data:image\/png;base64,/,
-      '',
-    );
+    return dataUrl.replace(/^data:image\/png;base64,/, '');
   }
 
   /**
@@ -162,24 +130,13 @@ export class QRCodeService {
    *
    * Builds payload and returns Data URL.
    */
-  async generate(
-    type: QRResourceType,
-    token: string,
-  ): Promise<QRResult> {
-
-    const payload =
-      this.buildPayload(
-        type,
-        token,
-      );
+  async generate(type: QRResourceType, token: string): Promise<QRResult> {
+    const payload = this.buildPayload(type, token);
 
     return {
       payload,
 
-      data:
-        await this.generateDataUrl(
-          payload,
-        ),
+      data: await this.generateDataUrl(payload),
     };
   }
 }

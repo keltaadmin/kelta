@@ -1,5 +1,4 @@
 export interface MemberCardTheme {
-
   name: string;
 
   primary: string;
@@ -16,7 +15,6 @@ export interface MemberCardTheme {
 }
 
 export const DEFAULT_MEMBER_CARD_THEME: MemberCardTheme = {
-
   name: 'default',
 
   primary: '#0E4A86',

@@ -1,19 +1,12 @@
 import { LayoutContext } from './layout.context';
 import { SvgFragment } from './layout.types';
 
-export function renderQr(
-  context: LayoutContext,
-): SvgFragment {
-
-  const {
-    layout,
-    qrSvg,
-  } = context;
+export function renderQr(context: LayoutContext): SvgFragment {
+  const { layout, qrSvg } = context;
 
   const qr = layout.qr;
 
   return {
-
     markup: `
 
 <g
@@ -26,7 +19,5 @@ ${qrSvg ?? ''}
 `,
 
     defs: [],
-
   };
-
 }

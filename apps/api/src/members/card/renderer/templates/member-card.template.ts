@@ -2,24 +2,15 @@ import { SvgFragment } from '../layout/layout.types';
 import { CARD_LAYOUT } from '../layout/layout.constants';
 
 export interface MemberCardTemplate {
-
   fragments: SvgFragment[];
-
 }
 
-export function buildMemberCard(
-
-  template: MemberCardTemplate,
-
-): string {
-
+export function buildMemberCard(template: MemberCardTemplate): string {
   const defs = template.fragments
-    .flatMap(fragment => fragment.defs ?? [])
+    .flatMap((fragment) => fragment.defs ?? [])
     .join('\n');
 
-  const body = template.fragments
-    .map(fragment => fragment.markup)
-    .join('\n');
+  const body = template.fragments.map((fragment) => fragment.markup).join('\n');
 
   return `
 
@@ -40,5 +31,4 @@ ${body}
 </svg>
 
 `;
-
 }

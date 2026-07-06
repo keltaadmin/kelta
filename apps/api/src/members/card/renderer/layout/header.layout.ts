@@ -1,24 +1,18 @@
 import { LayoutContext } from './layout.context';
 import { SvgFragment } from './layout.types';
 
-export function renderHeader(
-  context: LayoutContext,
-): SvgFragment {
-
+export function renderHeader(context: LayoutContext): SvgFragment {
   const {
-
     layout,
 
     theme,
 
     member,
-
   } = context;
 
   const header = layout.header;
 
   return {
-
     markup: `
 
 <rect
@@ -55,7 +49,5 @@ Official Digital Member Card
 `,
 
     defs: [],
-
   };
-
 }

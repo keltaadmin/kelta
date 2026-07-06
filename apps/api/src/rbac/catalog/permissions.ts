@@ -133,8 +133,7 @@ type ValueOf<T> = T[keyof T];
  *   CREATE: "member.create";
  * }
  */
-type PermissionCategory =
-  (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+type PermissionCategory = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 /**
  * Every permission literal supported by the platform.
@@ -146,6 +145,5 @@ type PermissionCategory =
  * | "audit.export"
  */
 export type Permission = {
-  [K in keyof typeof PERMISSIONS]:
-    (typeof PERMISSIONS)[K][keyof (typeof PERMISSIONS)[K]];
+  [K in keyof typeof PERMISSIONS]: (typeof PERMISSIONS)[K][keyof (typeof PERMISSIONS)[K]];
 }[keyof typeof PERMISSIONS];

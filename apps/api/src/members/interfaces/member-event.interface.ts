@@ -1,7 +1,6 @@
 import type { MemberEventType } from '../constants/member-events.constants';
 
 export interface MemberEvent {
-
   readonly type: MemberEventType;
 
   readonly memberId: string;

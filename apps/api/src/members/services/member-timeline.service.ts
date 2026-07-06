@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import type { MemberEvent } from '../interfaces';
 
@@ -25,9 +22,7 @@ import type { MemberEvent } from '../interfaces';
  */
 @Injectable()
 export class MemberTimelineService {
-  private readonly logger = new Logger(
-    MemberTimelineService.name,
-  );
+  private readonly logger = new Logger(MemberTimelineService.name);
 
   /**
    * Records a timeline event.
@@ -35,9 +30,7 @@ export class MemberTimelineService {
    * Future:
    * Persist into the MemberTimeline table.
    */
-  async record(
-    event: MemberEvent,
-  ): Promise<void> {
+  async record(event: MemberEvent): Promise<void> {
     this.logger.log(
       JSON.stringify({
         type: 'MEMBER_TIMELINE',
@@ -50,23 +43,17 @@ export class MemberTimelineService {
   /**
    * Records multiple timeline events.
    */
-  async recordMany(
-    events: readonly MemberEvent[],
-  ): Promise<void> {
+  async recordMany(events: readonly MemberEvent[]): Promise<void> {
     for (const event of events) {
       await this.record(event);
     }
   }
 
-    async recordLifecycle(
-    event: MemberEvent,
-  ): Promise<void> {
+  async recordLifecycle(event: MemberEvent): Promise<void> {
     await this.record(event);
   }
 
-  async recordSystem(
-    event: MemberEvent,
-  ): Promise<void> {
+  async recordSystem(event: MemberEvent): Promise<void> {
     await this.record(event);
   }
 }

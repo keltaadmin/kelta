@@ -1,24 +1,18 @@
 import { LayoutContext } from './layout.context';
 import { SvgFragment } from './layout.types';
 
-export function renderInfo(
-  context: LayoutContext,
-): SvgFragment {
-
+export function renderInfo(context: LayoutContext): SvgFragment {
   const {
-
     layout,
 
     member,
 
     theme,
-
   } = context;
 
   const info = layout.info;
 
   return {
-
     markup: `
 
 <text
@@ -89,7 +83,7 @@ y="${info.y + 134}"
 font-size="18"
 fill="${theme.text}">
 
-${member.designation ?? "-"}
+${member.designation ?? '-'}
 
 </text>
 
@@ -109,14 +103,12 @@ y="${info.y + 172}"
 font-size="18"
 fill="${theme.text}">
 
-${member.district ?? "-"}
+${member.district ?? '-'}
 
 </text>
 
 `,
 
     defs: [],
-
   };
-
 }

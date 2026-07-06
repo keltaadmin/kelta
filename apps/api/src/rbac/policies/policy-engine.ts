@@ -3,9 +3,7 @@ import type {
   AuthorizationResult,
 } from '../authorization';
 
-import type {
-  AuthorizationPolicy,
-} from './policy.interface';
+import type { AuthorizationPolicy } from './policy.interface';
 
 /**
  * Enterprise Policy Engine
@@ -45,8 +43,7 @@ export class PolicyEngine {
     policies: readonly AuthorizationPolicy<TResource>[],
   ): Promise<AuthorizationResult> {
     for (const policy of policies) {
-      const result =
-        await policy.evaluate(context);
+      const result = await policy.evaluate(context);
 
       if (!result.allowed) {
         return result;
@@ -62,5 +59,4 @@ export class PolicyEngine {
 /**
  * Shared singleton instance.
  */
-export const policyEngine =
-  new PolicyEngine();
+export const policyEngine = new PolicyEngine();

@@ -1,10 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { CardService } from './card.service';
 
@@ -12,9 +6,7 @@ import { CardPreviewDto } from './dto/card-preview.dto';
 
 @Controller('members/card')
 export class CardController {
-  constructor(
-    private readonly cardService: CardService,
-  ) {}
+  constructor(private readonly cardService: CardService) {}
 
   /**
    * Generates SVG preview.
@@ -24,9 +16,7 @@ export class CardController {
    */
   @Post('preview')
   @HttpCode(HttpStatus.OK)
-  async preview(
-    @Body() dto: CardPreviewDto,
-  ) {
+  async preview(@Body() dto: CardPreviewDto) {
     return this.cardService.preview(dto);
   }
 }

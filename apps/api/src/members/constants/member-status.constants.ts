@@ -11,9 +11,7 @@ export const MEMBER_STATUS = Object.freeze({
   RETIRED: MemberStatus.RETIRED,
 } as const);
 
-export const ACTIVE_MEMBER_STATUSES = Object.freeze([
-  MEMBER_STATUS.ACTIVE,
-]);
+export const ACTIVE_MEMBER_STATUSES = Object.freeze([MEMBER_STATUS.ACTIVE]);
 
 export const NON_ACTIVE_MEMBER_STATUSES = Object.freeze([
   MEMBER_STATUS.PENDING,

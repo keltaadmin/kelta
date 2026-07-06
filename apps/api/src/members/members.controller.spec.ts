@@ -41,22 +41,18 @@ describe('MembersController', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    const module: TestingModule =
-      await Test.createTestingModule({
-        controllers: [MembersController],
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [MembersController],
 
-        providers: [
-          {
-            provide: MembersService,
-            useValue: membersServiceMock,
-          },
-        ],
-      }).compile();
+      providers: [
+        {
+          provide: MembersService,
+          useValue: membersServiceMock,
+        },
+      ],
+    }).compile();
 
-    controller =
-      module.get<MembersController>(
-        MembersController,
-      );
+    controller = module.get<MembersController>(MembersController);
   });
 
   describe('Initialization', () => {

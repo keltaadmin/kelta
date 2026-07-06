@@ -31,36 +31,27 @@ export class PermissionResolver {
    * Value:
    *   Fully expanded permission list.
    */
-  private readonly cache = new Map<
-    RoleId,
-    readonly Permission[]
-  >();
+  private readonly cache = new Map<RoleId, readonly Permission[]>();
 
   /**
    * Resolves all effective permissions for the supplied role.
    */
-  resolvePermissions(
-    roleId: RoleId,
-  ): readonly Permission[] {
+  resolvePermissions(roleId: RoleId): readonly Permission[] {
     // Return cached permissions when available.
-    const cached =
-      this.cache.get(roleId);
+    const cached = this.cache.get(roleId);
 
     if (cached) {
       return cached;
     }
 
     // Resolve Permission Groups assigned to the role.
-    const groups =
-      roleResolver.resolvePermissionGroups(roleId);
+    const groups = roleResolver.resolvePermissionGroups(roleId);
 
     // Build a unique permission set.
-    const resolved =
-      new Set<Permission>();
+    const resolved = new Set<Permission>();
 
     for (const group of groups) {
-      const permissions =
-        PERMISSION_GROUPS[group];
+      const permissions = PERMISSION_GROUPS[group];
 
       for (const permission of permissions) {
         resolved.add(permission);
@@ -68,15 +59,10 @@ export class PermissionResolver {
     }
 
     // Freeze the result to prevent accidental mutation.
-    const result = Object.freeze([
-      ...resolved,
-    ]) as readonly Permission[];
+    const result = Object.freeze([...resolved]);
 
     // Cache for future lookups.
-    this.cache.set(
-      roleId,
-      result,
-    );
+    this.cache.set(roleId, result);
 
     return result;
   }
@@ -85,13 +71,8 @@ export class PermissionResolver {
    * Determines whether the supplied role contains the specified
    * permission.
    */
-  hasPermission(
-    roleId: RoleId,
-    permission: Permission,
-  ): boolean {
-    return this.resolvePermissions(
-      roleId,
-    ).includes(permission);
+  hasPermission(roleId: RoleId, permission: Permission): boolean {
+    return this.resolvePermissions(roleId).includes(permission);
   }
 
   /**
@@ -99,12 +80,8 @@ export class PermissionResolver {
    *
    * Useful for bulk permission comparisons.
    */
-  resolvePermissionSet(
-    roleId: RoleId,
-  ): ReadonlySet<Permission> {
-    return new Set(
-      this.resolvePermissions(roleId),
-    );
+  resolvePermissionSet(roleId: RoleId): ReadonlySet<Permission> {
+    return new Set(this.resolvePermissions(roleId));
   }
 
   /**
@@ -124,5 +101,4 @@ export class PermissionResolver {
 /**
  * Shared singleton instance.
  */
-export const permissionResolver =
-  new PermissionResolver();
+export const permissionResolver = new PermissionResolver();

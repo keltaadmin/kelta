@@ -76,32 +76,28 @@ describe('MembersService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    const module: TestingModule =
-      await Test.createTestingModule({
-        providers: [
-          MembersService,
-
-          {
-            provide: PrismaService,
-            useValue: prismaMock,
-          },
-
-          {
-            provide: NumberingService,
-            useValue: numberingServiceMock,
-          },
-
-          {
-            provide: MemberLifecycleService,
-            useValue: lifecycleServiceMock,
-          },
-        ],
-      }).compile();
-
-    service =
-      module.get<MembersService>(
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
         MembersService,
-      );
+
+        {
+          provide: PrismaService,
+          useValue: prismaMock,
+        },
+
+        {
+          provide: NumberingService,
+          useValue: numberingServiceMock,
+        },
+
+        {
+          provide: MemberLifecycleService,
+          useValue: lifecycleServiceMock,
+        },
+      ],
+    }).compile();
+
+    service = module.get<MembersService>(MembersService);
   });
 
   describe('Initialization', () => {

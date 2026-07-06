@@ -5,7 +5,6 @@
  */
 
 export interface LayoutBlock {
-
   x: number;
 
   y: number;
@@ -16,7 +15,6 @@ export interface LayoutBlock {
 }
 
 export interface CardLayout {
-
   width: number;
 
   height: number;
@@ -33,13 +31,11 @@ export interface CardLayout {
 }
 
 export const CARD_LAYOUT: CardLayout = {
-
   width: 1016,
 
   height: 640,
 
   header: {
-
     x: 0,
 
     y: 0,
@@ -47,11 +43,9 @@ export const CARD_LAYOUT: CardLayout = {
     width: 1016,
 
     height: 110,
-
   },
 
   photo: {
-
     x: 40,
 
     y: 150,
@@ -59,11 +53,9 @@ export const CARD_LAYOUT: CardLayout = {
     width: 180,
 
     height: 220,
-
   },
 
   info: {
-
     x: 260,
 
     y: 145,
@@ -71,11 +63,9 @@ export const CARD_LAYOUT: CardLayout = {
     width: 520,
 
     height: 240,
-
   },
 
   qr: {
-
     x: 810,
 
     y: 340,
@@ -83,11 +73,9 @@ export const CARD_LAYOUT: CardLayout = {
     width: 170,
 
     height: 170,
-
   },
 
   footer: {
-
     x: 40,
 
     y: 580,
@@ -95,7 +83,5 @@ export const CARD_LAYOUT: CardLayout = {
     width: 936,
 
     height: 40,
-
   },
-
 };

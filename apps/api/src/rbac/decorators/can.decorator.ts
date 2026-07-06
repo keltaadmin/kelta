@@ -9,8 +9,7 @@ import type { Permission } from '../catalog/permissions';
  * Permissions decorator to allow future expansion
  * (resource policies, ownership rules, ABAC, etc.).
  */
-export const CAN_METADATA_KEY =
-  'rbac:can';
+export const CAN_METADATA_KEY = 'rbac:can';
 
 /**
  * Enterprise Authorization Decorator
@@ -29,10 +28,6 @@ export const CAN_METADATA_KEY =
  */
 export function Can(
   ...permissions: readonly Permission[]
-): MethodDecorator &
-  ClassDecorator {
-  return SetMetadata(
-    CAN_METADATA_KEY,
-    permissions,
-  );
+): MethodDecorator & ClassDecorator {
+  return SetMetadata(CAN_METADATA_KEY, permissions);
 }

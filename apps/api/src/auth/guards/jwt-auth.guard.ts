@@ -9,27 +9,19 @@ import { SupabaseAuthService } from '../services/supabase-auth.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(
-    private readonly supabaseAuthService: SupabaseAuthService,
-  ) {}
+  constructor(private readonly supabaseAuthService: SupabaseAuthService) {}
 
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException(
-        'Authorization header missing',
-      );
+      throw new UnauthorizedException('Authorization header missing');
     }
 
     if (!authorization.startsWith('Bearer ')) {
-      throw new UnauthorizedException(
-        'Invalid authorization header',
-      );
+      throw new UnauthorizedException('Invalid authorization header');
     }
 
     const token = authorization.substring(7);

@@ -6,7 +6,6 @@
  */
 
 export interface MemberCard {
-
   readonly memberId: string;
 
   readonly memberNumber: string;

@@ -9,5 +9,3 @@ export * from './card.types';
 export * from './dto/card-preview.dto';
 export * from './dto/card-response.dto';
 export * from './dto/generate-card.dto';
-
-

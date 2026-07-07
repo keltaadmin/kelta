@@ -16,7 +16,7 @@ export class CardController {
    */
   @Post('preview')
   @HttpCode(HttpStatus.OK)
-  async preview(@Body() dto: CardPreviewDto) {
+  preview(@Body() dto: CardPreviewDto) {
     return this.cardService.preview(dto);
   }
 }

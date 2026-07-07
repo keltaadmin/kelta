@@ -10,7 +10,7 @@ export class CardRendererEngine {
    * Batch 4 replaces this implementation with the
    * complete SVG rendering pipeline.
    */
-  async render(dto: CardPreviewDto): Promise<string> {
+  render(dto: CardPreviewDto): string {
     return `
 <svg xmlns="http://www.w3.org/2000/svg"
      width="1011"

@@ -119,31 +119,6 @@ export const PERMISSIONS = {
   },
 } as const;
 
-/**
- * Utility type that extracts the value union of an object.
- */
-type ValueOf<T> = T[keyof T];
-
-/**
- * A single permission category.
- *
- * Example:
- * {
- *   READ: "member.read";
- *   CREATE: "member.create";
- * }
- */
-type PermissionCategory = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
-
-/**
- * Every permission literal supported by the platform.
- *
- * Produces:
- * "member.read"
- * | "member.create"
- * | ...
- * | "audit.export"
- */
 export type Permission = {
   [K in keyof typeof PERMISSIONS]: (typeof PERMISSIONS)[K][keyof (typeof PERMISSIONS)[K]];
 }[keyof typeof PERMISSIONS];

@@ -26,7 +26,7 @@ export default function PersonalInfoStep({
       </h2>
 
       <p className="mt-2 text-slate-600">
-        This step will capture the applicant's personal details.
+        This step will capture the applicant&apos;s personal details.
       </p>
 
       <pre className="mt-6 text-xs">

@@ -6,7 +6,7 @@ import type { MemberEvent } from '../interfaces';
 export class MemberAuditService {
   private readonly logger = new Logger(MemberAuditService.name);
 
-  async record(event: MemberEvent): Promise<void> {
+  record(event: MemberEvent): void {
     this.logger.log(
       JSON.stringify({
         type: 'MEMBER_AUDIT',
@@ -15,15 +15,15 @@ export class MemberAuditService {
     );
   }
 
-  async recordBusiness(event: MemberEvent): Promise<void> {
-    await this.record(event);
+  recordBusiness(event: MemberEvent): void {
+    this.record(event);
   }
 
-  async recordSecurity(event: MemberEvent): Promise<void> {
-    await this.record(event);
+  recordSecurity(event: MemberEvent): void {
+    this.record(event);
   }
 
-  async recordSystem(event: MemberEvent): Promise<void> {
-    await this.record(event);
+  recordSystem(event: MemberEvent): void {
+    this.record(event);
   }
 }

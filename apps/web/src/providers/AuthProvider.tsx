@@ -21,81 +21,90 @@ interface Props {
 export default function AuthProvider({
   children,
 }: Props) {
-  const [user, setUser] =
-    useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const refresh =
-    useCallback(async () => {
-      setLoading(true);
+  /**
+   * Refreshes the authenticated user state.
+   */
+  const refresh = useCallback(async (): Promise<void> => {
+    setLoading(true);
 
-      try {
-        const authenticated =
-          await authRepository.refreshSession();
+    try {
+      const authenticated =
+        await authRepository.refreshSession();
 
-        if (!authenticated) {
-          setUser(null);
-          return;
-        }
-
-        const currentUser =
-          await authRepository.currentUser();
-
-        setUser(currentUser);
-      } catch (error) {
-        console.error(
-          'Authentication refresh failed:',
-          error,
-        );
-
+      if (!authenticated) {
         setUser(null);
-      } finally {
-        setLoading(false);
+        return;
       }
-    }, []);
+
+      const currentUser =
+        await authRepository.currentUser();
+
+      setUser(currentUser);
+    } catch (error) {
+      console.error(
+        'Authentication refresh failed:',
+        error,
+      );
+
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  /**
+   * Initial authentication state.
+   */
+  const initialize = useCallback(async (): Promise<void> => {
+    await refresh();
+  }, [refresh]);
 
   useEffect(() => {
-    const supabase =
-      getSupabaseClient();
+    const supabase = getSupabaseClient();
 
-    void refresh();
+    let mounted = true;
+
+    void (async () => {
+      if (mounted) {
+        await initialize();
+      }
+    })();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (event) => {
-        switch (event) {
-          case 'INITIAL_SESSION':
-          case 'SIGNED_IN':
-          case 'SIGNED_OUT':
-          case 'TOKEN_REFRESHED':
-          case 'USER_UPDATED':
+    } = supabase.auth.onAuthStateChange(async (event) => {
+      switch (event) {
+        case 'INITIAL_SESSION':
+        case 'SIGNED_IN':
+        case 'SIGNED_OUT':
+        case 'TOKEN_REFRESHED':
+        case 'USER_UPDATED':
+          if (mounted) {
             await refresh();
-            break;
+          }
+          break;
 
-          default:
-            break;
-        }
-      },
-    );
+        default:
+          break;
+      }
+    });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [refresh]);
+  }, [initialize, refresh]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-
         loading,
-
-        authenticated:
-          user !== null,
-
+        authenticated: user !== null,
         refresh,
       }}
     >

@@ -8,10 +8,7 @@ export function validateEnv(
   ];
 
   const missing = required.filter(
-    (key) =>
-      config[key] === undefined ||
-      config[key] === null ||
-      String(config[key]).trim() === '',
+    (key) => typeof config[key] !== 'string' || config[key].trim() === '',
   );
 
   if (missing.length) {

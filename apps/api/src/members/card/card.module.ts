@@ -7,12 +7,7 @@ import { CardRendererEngine } from './renderer/engine/card-renderer.engine';
 
 @Module({
   controllers: [CardController],
-  providers: [
-    CardService,
-    CardRendererEngine,
-  ],
-  exports: [
-    CardService,
-  ],
+  providers: [CardService, CardRendererEngine],
+  exports: [CardService],
 })
 export class CardModule {}

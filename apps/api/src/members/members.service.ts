@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { MemberStatus, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { NumberingService } from '../numbering/numbering.service';
@@ -279,7 +279,7 @@ export class MembersService {
 
       const event = this.events.memberActivated(updated.id, member.status);
 
-      await this.publishEvent(event);
+      this.publishEvent(event);
 
       return updated;
     });
@@ -310,7 +310,7 @@ export class MembersService {
 
       const event = this.events.memberSuspended(updated.id, member.status);
 
-      await this.publishEvent(event);
+      this.publishEvent(event);
 
       return updated;
     });
@@ -341,7 +341,7 @@ export class MembersService {
 
       const event = this.events.memberRestored(updated.id, member.status);
 
-      await this.publishEvent(event);
+      this.publishEvent(event);
 
       return updated;
     });
@@ -378,7 +378,7 @@ export class MembersService {
         nextExpiry,
       );
 
-      await this.publishEvent(event);
+      this.publishEvent(event);
 
       return updated;
     });
@@ -409,7 +409,7 @@ export class MembersService {
 
       const event = this.events.memberRetired(updated.id, member.status);
 
-      await this.publishEvent(event);
+      this.publishEvent(event);
 
       return updated;
     });
@@ -429,10 +429,10 @@ export class MembersService {
    * - WebSocket
    * - Analytics
    */
-  private async publishEvent(event: MemberEvent): Promise<void> {
-    await this.timeline.recordLifecycle(event);
+  private publishEvent(event: MemberEvent): void {
+    this.timeline.recordLifecycle(event);
 
-    await this.audit.recordBusiness(event);
+    this.audit.recordBusiness(event);
   }
 
   /**

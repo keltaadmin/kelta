@@ -1,9 +1,7 @@
 import { LayoutContext } from './layout.context';
 import { SvgFragment } from './layout.types';
 
-export function renderPhoto(
-  context: LayoutContext,
-): SvgFragment {
+export function renderPhoto(context: LayoutContext): SvgFragment {
   const { layout, member } = context;
 
   const photo = layout.photo;

@@ -6,13 +6,14 @@ import {
 } from '@nestjs/common';
 
 import { SupabaseAuthService } from '../services/supabase-auth.service';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly supabaseAuthService: SupabaseAuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const authorization = request.headers.authorization;
 

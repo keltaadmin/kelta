@@ -19,17 +19,14 @@ export class SvgRenderer {
       throw new Error('Member QR token is missing.');
     }
 
-    const payload = this.qrService.buildPayload(
-      'member',
-      token,
-    );
+    const payload = this.qrService.buildPayload('member', token);
 
     const qrSvg = await this.qrService.generateSvg(payload);
 
     return buildFrontTemplate(member, qrSvg);
   }
 
-  async renderBack(member: MemberCardData): Promise<string> {
+  renderBack(member: MemberCardData): string {
     return buildBackTemplate(member);
   }
 }

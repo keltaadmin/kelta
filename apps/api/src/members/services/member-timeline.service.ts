@@ -30,7 +30,7 @@ export class MemberTimelineService {
    * Future:
    * Persist into the MemberTimeline table.
    */
-  async record(event: MemberEvent): Promise<void> {
+  record(event: MemberEvent): void {
     this.logger.log(
       JSON.stringify({
         type: 'MEMBER_TIMELINE',
@@ -43,17 +43,17 @@ export class MemberTimelineService {
   /**
    * Records multiple timeline events.
    */
-  async recordMany(events: readonly MemberEvent[]): Promise<void> {
+  recordMany(events: readonly MemberEvent[]): void {
     for (const event of events) {
-      await this.record(event);
+      this.record(event);
     }
   }
 
-  async recordLifecycle(event: MemberEvent): Promise<void> {
-    await this.record(event);
+  recordLifecycle(event: MemberEvent): void {
+    this.record(event);
   }
 
-  async recordSystem(event: MemberEvent): Promise<void> {
-    await this.record(event);
+  recordSystem(event: MemberEvent): void {
+    this.record(event);
   }
 }

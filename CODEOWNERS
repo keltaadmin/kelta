@@ -1,0 +1,140 @@
+# ==========================================================
+# KELTA Enterprise Platform
+# CODEOWNERS
+#
+# Repository:
+# https://github.com/keltaadmin/kelta
+#
+# This file defines the default code reviewers for the
+# KELTA Enterprise Platform.
+#
+# NOTE:
+# The referenced GitHub teams must exist in the
+# keltaadmin organization.
+# ==========================================================
+
+# ----------------------------------------------------------
+# Default Owner
+# ----------------------------------------------------------
+
+* @keltaadmin/core
+
+# ----------------------------------------------------------
+# Documentation
+# ----------------------------------------------------------
+
+/docs/ @keltaadmin/docs
+
+# ----------------------------------------------------------
+# GitHub Configuration
+# ----------------------------------------------------------
+
+/.github/ @keltaadmin/core
+
+# ----------------------------------------------------------
+# Backend (NestJS API)
+# ----------------------------------------------------------
+
+/apps/api/ @keltaadmin/backend
+
+# Authentication
+
+/apps/api/src/auth/ @keltaadmin/security
+
+# RBAC
+
+/apps/api/src/rbac/ @keltaadmin/security
+
+# Permissions
+
+/apps/api/src/permissions/ @keltaadmin/security
+
+# Members
+
+/apps/api/src/members/ @keltaadmin/membership
+
+# Membership Applications
+
+/apps/api/src/applications/ @keltaadmin/membership
+
+# Payments
+
+/apps/api/src/payments/ @keltaadmin/finance
+
+# Certificates
+
+/apps/api/src/certificates/ @keltaadmin/certificates
+
+# Committees
+
+/apps/api/src/committees/ @keltaadmin/committees
+
+# Meetings
+
+/apps/api/src/meetings/ @keltaadmin/committees
+
+# Notifications
+
+/apps/api/src/notifications/ @keltaadmin/platform
+
+# CMS
+
+/apps/api/src/cms/ @keltaadmin/content
+
+# Reports
+
+/apps/api/src/reports/ @keltaadmin/analytics
+
+# Infrastructure
+
+/apps/api/src/infrastructure/ @keltaadmin/platform
+
+# ----------------------------------------------------------
+# Frontend (Next.js)
+# ----------------------------------------------------------
+
+/apps/web/ @keltaadmin/frontend
+
+# ----------------------------------------------------------
+# Shared Packages
+# ----------------------------------------------------------
+
+/packages/ @keltaadmin/core
+
+# ----------------------------------------------------------
+# Database
+# ----------------------------------------------------------
+
+/prisma/ @keltaadmin/database
+
+# ----------------------------------------------------------
+# Infrastructure
+# ----------------------------------------------------------
+
+/docker/ @keltaadmin/platform
+
+/scripts/ @keltaadmin/platform
+
+# ----------------------------------------------------------
+# CI/CD
+# ----------------------------------------------------------
+
+/.github/workflows/ @keltaadmin/platform
+
+# ----------------------------------------------------------
+# Configuration Files
+# ----------------------------------------------------------
+
+package.json @keltaadmin/core
+
+pnpm-workspace.yaml @keltaadmin/core
+
+turbo.json @keltaadmin/core
+
+tsconfig*.json @keltaadmin/core
+
+docker-compose*.yml @keltaadmin/platform
+
+Dockerfile* @keltaadmin/platform
+
+.env.example @keltaadmin/platform
